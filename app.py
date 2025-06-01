@@ -16,9 +16,7 @@ def get_db_connection():
 
 @app.route('/')
 def index():
-    if 'usuario_id' in session:
-        return render_template('home.html', nombre=session['nombre'])
-    return redirect(url_for('login'))
+    return render_template('home.html')  # sin verificar la sesión
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
