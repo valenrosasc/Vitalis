@@ -1,0 +1,109 @@
+{% extends "base_auth.html" %}
+{% block title %}Vitalis - Administración{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-xl-5 col-lg-6 col-md-8">
+            <!-- Tarjeta con borde naranja -->
+            <div class="auth-card card my-5 border-0 shadow-lg overflow-hidden" style="border-left: 4px solid #e98c22; border-radius: 15px;">
+                
+                <!-- Header con gradiente naranja -->
+                <div class="card-header p-4" style="background: linear-gradient(135deg, #e98c22 0%, #d76d1b 100%); color: white;">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="bi bi-shield-lock-fill fs-1 me-3"></i>
+                        <div>
+                            <h3 class="mb-0 fw-bold">Panel Administrativo</h3>
+                            <p class="mb-0 small">Acceso restringido</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cuerpo del formulario -->
+                <div class="card-body p-4 p-sm-5">
+                    <form class="needs-validation" novalidate>
+                        <!-- Campo Usuario -->
+                        <div class="mb-4">
+                            <label for="usuario" class="form-label" style="color: #e98c22; font-weight: bold;">Usuario Admin</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-person-fill-gear" style="color: #e98c22;"></i>
+                                </span>
+                                <input type="text" class="form-control py-2" id="usuario" 
+                                       placeholder="Ej: admin.sede1" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Campo Contraseña -->
+                        <div class="mb-4">
+                            <label for="password" class="form-label" style="color: #e98c22; font-weight: bold;">Contraseña Maestra</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-key-fill" style="color: #e98c22;"></i>
+                                </span>
+                                <input type="password" class="form-control py-2" id="password" 
+                                       placeholder="••••••••" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Campo 2FA -->
+                        <div class="mb-4">
+                            <label for="codigo2fa" class="form-label" style="color: #e98c22; font-weight: bold;">Código 2FA</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-phone-fill" style="color: #e98c22;"></i>
+                                </span>
+                                <input type="text" class="form-control py-2" id="codigo2fa" 
+                                       placeholder="Código de 6 dígitos" required>
+                            </div>
+                            <small class="text-muted">Usa Google Authenticator o similar</small>
+                        </div>
+                        
+                        <!-- Botón de ingreso -->
+                        <button type="submit" class="btn btn-lg w-100 py-2 mb-3 shadow-sm" 
+                                style="background-color: #e98c22; color: white; border: none;">
+                            <i class="bi bi-shield-check me-2"></i> Autenticarse
+                        </button>
+                        
+                        <!-- Mensaje de seguridad -->
+                        <div class="alert alert-danger small p-2 text-center">
+                            <i class="bi bi-exclamation-octagon-fill"></i> Solo personal autorizado. Todas las acciones son auditadas.
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts (igual que en los otros logins) -->
+<script>
+    // Mostrar/ocultar contraseña
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const password = document.getElementById('password');
+        const icon = this.querySelector('i');
+        if (password.type === 'password') {
+            password.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            password.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    });
+</script>
+
+<style>
+    /* Efectos naranja */
+    .form-control:focus {
+        border-color: #e98c22;
+        box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.25);
+    }
+    .btn:hover {
+        background-color: #d76d1b !important;
+        transition: all 0.3s;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends "base_auth.html" %}
+{% block title %}Vitalis - Pacientes{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-xl-5 col-lg-6 col-md-8">
+            <!-- Tarjeta con animación -->
+            <div class="auth-card card my-5 border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
+                <!-- Header con gradiente verde -->
+                <div class="card-header p-4" style="background: linear-gradient(135deg, #73c179 0%, #65a365 100%); color: white;">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="bi bi-heart-pulse fs-1 me-3"></i>
+                        <div>
+                            <h3 class="mb-0 fw-bold">Bienvenido a Vitalis</h3>
+                            <p class="mb-0 small">Acceso seguro para pacientes</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cuerpo del formulario -->
+                <div class="card-body p-4 p-sm-5">
+                    <form class="needs-validation" novalidate>
+                        <!-- Campo Email -->
+                        <div class="mb-4">
+                            <label for="email" class="form-label" style="color: #73c179; font-weight: bold;">Correo Electrónico</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-envelope" style="color: #73c179;"></i>
+                                </span>
+                                <input type="email" class="form-control py-2" id="email" 
+                                       placeholder="tucorreo@ejemplo.com" required>
+                            </div>
+                            <div class="invalid-feedback">
+                                Por favor ingresa un correo válido
+                            </div>
+                        </div>
+                        
+                        <!-- Campo Contraseña -->
+                        <div class="mb-4">
+                            <label for="password" class="form-label" style="color: #73c179; font-weight: bold;">Contraseña</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-lock" style="color: #73c179;"></i>
+                                </span>
+                                <input type="password" class="form-control py-2" id="password" 
+                                       placeholder="••••••••" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">
+                                La contraseña es requerida
+                            </div>
+                        </div>
+                        
+                        <!-- Recordar sesión + Olvidé contraseña -->
+                        <div class="d-flex justify-content-between mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember">
+                                <label class="form-check-label small" for="remember">
+                                    Recordar sesión
+                                </label>
+                            </div>
+                            <a href="#" class="small" style="color: #73c179; text-decoration: none;">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+                        
+                        <!-- Botón de ingreso verde -->
+                        <button type="submit" class="btn btn-vitalis btn-lg w-100 py-2 mb-3 shadow-sm">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Ingresar
+                        </button>
+                        
+                        <!-- Registro -->
+                        <div class="text-center mt-4">
+                            <p class="small mb-0">¿No tienes cuenta? 
+                                <a href="#" class="fw-bold" style="color: #73c179; text-decoration: none;">
+                                    Regístrate aquí
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Animaciones y validación -->
+<script>
+    // Mostrar/ocultar contraseña
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const password = document.getElementById('password');
+        const icon = this.querySelector('i');
+        if (password.type === 'password') {
+            password.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            password.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    });
+
+    // Validación de formulario
+    (function() {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+
+<style>
+    /* Efecto hover para el botón verde */
+    .btn-vitalis {
+        transition: all 0.3s ease;
+    }
+    .btn-vitalis:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Animación de carga */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .auth-card {
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    /* Efecto para inputs */
+    .form-control:focus {
+        border-color: #73c179;
+        box-shadow: 0 0 0 0.25rem rgba(115, 193, 121, 0.25);
+    }
+</style>
+{% endblock %}

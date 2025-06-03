@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía para Pacientes - Vitalis</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .header-vitalis {
+            background-color: #66b16c;
+            color: white;
+        }
+        .card-guia {
+            border-left: 4px solid #66b16c;
+            transition: transform 0.3s;
+        }
+        .card-guia:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .btn-vitalis {
+            background-color: #66b16c;
+            color: white;
+        }
+        .paso-numero {
+            background-color: #1e945d;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .documentos-table {
+            background-color: #e8f5e9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (usa el mismo que en tu dashboard) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-heart-pulse"></i> Vitalis
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/guia-pacientes">¿Cómo usar Vitalis?</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Header -->
+    <div class="header-vitalis py-4 mb-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class=></i> Guía para Pacientes</h1>
+                    <p class="lead mb-0">Cómo gestionar tus incapacidades en Vitalis</p>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <!-- Sección 1: Acceso -->
+        <div class="card card-guia mb-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h3 class="mb-0"><span class="paso-numero">1</span> Acceder al Sistema</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-laptop"></i> Desde computadora o móvil:</h5>
+                        <ol>
+                            <li>Ingresa a <a href="#" class="text-success">www.vitalis.com/login</a></li>
+                            <li>Usa tus credenciales:
+                                <ul>
+                                    <li><strong>Usuario:</strong> Tu número de documento</li>
+                                    <li><strong>Contraseña:</strong> La que recibiste por correo</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-light">
+                            <h5><i class="bi bi-question-circle"></i> ¿Problemas?</h5>
+                            <p>Haz clic en <em>"¿Olvidaste tu contraseña?"</em> o contacta a soporte:</p>
+                            <p><i class="bi bi-telephone"></i> <strong>01-800-VITALIS</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 2: Subir incapacidad -->
+        <div class="card card-guia mb-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h3 class="mb-0"><span class="paso-numero">2</span> Subir una Incapacidad</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-upload"></i> Pasos:</h5>
+                        <ol>
+                            <li>Haz clic en <strong>"Nueva Incapacidad"</strong></li>
+                            <li>Elige el tipo:
+                                <ul>
+                                    <li>🏥 Enfermedad general</li>
+                                    <li>🚑 Accidente laboral/tránsito</li>
+                                    <li>👶 Licencia de maternidad/paternidad</li>
+                                </ul>
+                            </li>
+                            <li>Sube los documentos (fotos o PDF)</li>
+                            <li>¡Listo! Recibirás un correo de confirmación</li>
+                        </ol>
+                        <div class="alert alert-warning mt-3">
+                            <i class="bi bi-exclamation-triangle"></i> <strong>Plazo máximo:</strong> 2 días después de emitida la incapacidad.
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 3: Consultar estado -->
+        <div class="card card-guia mb-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h3 class="mb-0"><span class="paso-numero">3</span> Consultar el Estado</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-clipboard2-check"></i> Estados posibles:</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item list-group-item-success">✅ <strong>Aprobada</strong>: Tu EPS ya la aceptó</li>
+                            <li class="list-group-item list-group-item-warning">📝 <strong>En revisión</strong>: Espera 3-5 días hábiles</li>
+                            <li class="list-group-item list-group-item-danger">❌ <strong>Rechazada</strong>: Te llegará un mensaje con correcciones</li>
+                        </ul>
+                        <p>Para más detalles, ve a <strong>"Historial"</strong> en tu menú principal.</p>
+                    </div>
+                    <div class="col-md-6">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 4: Documentos requeridos -->
+        <div class="card card-guia mb-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h3 class="mb-0"><i class="bi bi-file-earmark-text"></i> Documentos Requeridos</h3>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered mb-0 documentos-table">
+                    <thead class="table-success">
+                        <tr>
+                            <th>Tipo de Incapacidad</th>
+                            <th>Qué Subir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Enfermedad general</td>
+                            <td>Incapacidad + Epicrisis (si es mayor a 2 días)</td>
+                        </tr>
+                        <tr>
+                            <td>Accidente de tránsito</td>
+                            <td>Incapacidad + FURIPS + Epicrisis</td>
+                        </tr>
+                        <tr>
+                            <td>Maternidad/Paternidad</td>
+                            <td>Certificado de nacido vivo + Registro civil</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sección 5: Ayuda -->
+        <div class="card card-guia mb-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h3 class="mb-0"><i class="bi bi-question-circle"></i> ¿Necesitas Ayuda?</h3>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 border rounded bg-light">
+                            <i class="bi bi-envelope fs-1 text-success"></i>
+                            <h5>Correo</h5>
+                            <p>pacientes@vitalis.com</p>
+                            <a href="#" class="btn btn-vitalis btn-sm">Contactar</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 border rounded bg-light">
+                            <i class="bi bi-telephone fs-1 text-success"></i>
+                            <h5>Teléfono</h5>
+                            <p>01-800-VITALIS</p>
+                            <a href="#" class="btn btn-vitalis btn-sm">Llamar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center py-4 text-muted">
+            <p>© 2025 Vitalis - Sistema de gestión de incapacidades médicas</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="#" class="text-success"><i class="bi bi-apple"></i> App Store</a>
+                <a href="#" class="text-success"><i class="bi bi-google-play"></i> Play Store</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

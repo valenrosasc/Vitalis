@@ -33,7 +33,7 @@ def login():
             session['nombre'] = user['nombre']
             return redirect(url_for('index'))
         return 'Credenciales inválidas'
-    return render_template('login.html')
+    return render_template('home.html')
 
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
@@ -59,6 +59,13 @@ def registro():
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+@app.route('/about')
+def about():
+    return render_template('about.html') 
+@app.route('/guia-pacientes')
+def guia_pacientes():
+    return render_template('guia_pacientes.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
