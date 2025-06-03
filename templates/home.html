@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Vitalis</title>
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- Iconos de Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- CSS personalizado -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    
     <style>
         .sidebar {
             min-height: 100vh;
@@ -17,15 +23,34 @@
             color: #333;
         }
         .sidebar .nav-link:hover {
-            background-color: #e9ecef;
+            background-color: #e8f5e9;
+        }
+        .top-navbar {
+            background-color: #e8f5e9;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <!-- Jumbotron (banner superior) -->
-    <div class="jumbotron bg-light p-5 rounded">
+    <!-- Barra de navegación superior -->
+    <div class="top-navbar">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="m-0"><i class="bi bi-heart-pulse"></i> Vitalis</h4>
+                <div>
+                    <a class="btn btn-outline-dark me-3" href="/pacientes"><i class="bi-person-badge"></i> Pacientes</a>
+                    <a class="btn btn-outline-dark me-3" href="/medicos"><i class="bi-person-badge"></i> Médicos</a>
+                    <a class="btn btn-outline-dark" href="/administradores"><i class="bi bi-briefcase"></i> Administradores</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jumbotron -->
+    <div class="jumbotron bg-light p-5 rounded text-center">
         <h1 class="display-4" style="font-family: 'Segoe UI', sans-serif; font-weight: 700; color: #212f3c;">
-            ¡Bienvenido a <span style="color: #45b39d ;">Vitalis</span>!
+            ¡Bienvenido a <span style="color: #198754;">Vitalis</span>!
         </h1>
         <p class="lead" style="font-family: 'Arial'; font-size: 1.3rem;">
             Sistema de gestión de incapacidades médicas al alcance de todos.
@@ -34,46 +59,55 @@
         <p class="fs-5">Gestiona, registra y sigue el estado de las incapacidades de manera eficiente.</p>
     </div>
 
+    <!-- Contenido principal -->
     <div class="container-fluid">
-        <div class="row">
-            <!-- Barra lateral -->
-            <nav class="col-md-2 sidebar p-0">
-                <div class="p-3">
-                    <h4 class="text-center"><i class="bi bi-heart-pulse"></i> Vitalis</h4>
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/medicos"><i class="bi-person-badge"></i> Médicos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/administradores"><i class="bi bi-briefcase"></i> Administradores</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/pacientes"><i class="bi bi-people"></i> Pacientes</a>
-                    </li>
-                </ul>
-            </nav>
-<!-- Contenedor de la card (pegado a la barra lateral) -->
-        <div class="col-md-10 p-3">  <!-- Ajusta el ancho según necesites (col-md-10) -->
-            <div class="d-flex align-items-start">  <!-- Alinea la card arriba -->
-                <div class="card shadow me-3" style="width: 280px;">  <!-- me-3 = margen derecho -->
-                    <img src="{{ url_for('static', filename='images/vitalis.png') }}" 
-                         class="card-img-top" 
-                         alt="Logo de Vitalis" 
-                         style="height: 150px; object-fit: contain; padding: 10px;">
-                    <div class="card-body text-center p-2">
-                        <h6 class="card-title mb-1">¿Quiénes somos?</h6>
-                        <p class="card-text small mb-2">Innovando en gestión médica.</p>
-                        <a href="/about" class="btn btn-primary btn-sm">Conócenos</a>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <!-- Card 1 -->
+                    <div class="card shadow" style="width: 280px;">
+                        <img src="{{ url_for('static', filename='images/vitalis.png') }}" 
+                             class="card-img-top" 
+                             alt="Logo de Vitalis" 
+                             style="height: 150px; object-fit: contain; padding: 10px;">
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title mb-1">¿Quiénes somos?</h6>
+                            <p class="card-text small mb-2">Innovando en gestión médica.</p>
+                            <a href="{{ url_for('about') }}" class="btn btn-vitalis btn-sm">Conócenos</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="card shadow" style="width: 280px;">
+                        <img src="{{ url_for('static', filename='images/vitalis2.png') }}" 
+                             class="card-img-top" 
+                             alt="Guía Vitalis" 
+                             style="height: 150px; object-fit: contain; padding: 10px;">
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title">¿Cómo usar Vitalis?</h6>
+                            <p class="card-text small mb-2">Conoce nuestra guía paso a paso</p>
+                            <a href="{{ url_for('guia_pacientes') }}" class="btn btn-vitalis btn-sm">Guía</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3 -->
+                    <div class="card shadow" style="width: 280px;">
+                        <img src="{{ url_for('static', filename='images/vitalis3.png') }}" 
+                             class="card-img-top" 
+                             alt="Preguntas Frecuentes" 
+                             style="height: 150px; object-fit: contain; padding: 10px;">
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title">Preguntas frecuentes</h6>
+                            <p class="card-text small mb-2">¿Tienes alguna duda?</p>
+                            <a href="/contacto" class="btn btn-vitalis btn-sm">Click aquí</a>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Espacio para agregar las otras 2 cards después -->
             </div>
         </div>
     </div>
-</div>
-    <!-- Bootstrap JS -->
+
+    <!-- Bootstrap JS (solo una carga al final) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,25 @@
+/* static/css/styles.css */
+:root {
+    --vitalis-primary: #73c179;
+    --vitalis-hover: #65a365;
+}
+
+/* Estilo para el botón personalizado */
+.btn-vitalis {
+    background-color: var(--vitalis-primary) !important;
+    border-color: var(--vitalis-primary) !important;
+    color: white !important;
+}
+
+.btn-vitalis:hover {
+    background-color: var(--vitalis-hover) !important;
+    border-color: var(--vitalis-hover) !important;
+}
+
+/* Estilo para asegurar que el botón tenga el mismo tamaño que otros */
+.btn-vitalis.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.2rem;
+}
+
