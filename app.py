@@ -66,25 +66,25 @@ def login():
         return 'Credenciales inválidas'
     return render_template('home.html')
 
-@app.route('/registro', methods=['GET', 'POST'])
-def registro():
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        email = request.form['email']
-        contraseña = generate_password_hash(request.form['contraseña'])
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute(
-                'INSERT INTO usuarios (nombre, email, contraseña) VALUES (%s, %s, %s)',
-                (nombre, email, contraseña)
-            )
-            conn.commit()
-            conn.close()
-            return redirect(url_for('login'))
-        except Error as e:
-            return f'Error: {str(e)}'
-    return render_template('register.html')
+# @app.route('/registro', methods=['GET', 'POST'])
+# def registro():
+#     if request.method == 'POST':
+#         nombre = request.form['nombre']
+#         email = request.form['email']
+#         contraseña = generate_password_hash(request.form['contraseña'])
+#         try:
+#             conn = get_db_connection()
+#             cursor = conn.cursor()
+#             cursor.execute(
+#                 'INSERT INTO usuarios (nombre, email, contraseña) VALUES (%s, %s, %s)',
+#                 (nombre, email, contraseña)
+#             )
+#             conn.commit()
+#             conn.close()
+#             return redirect(url_for('login'))
+#         except Error as e:
+#             return f'Error: {str(e)}'
+#     return render_template('register.html')
 
 @app.route('/logout')
 def logout():
@@ -112,6 +112,7 @@ def login_medicos():
 @app.route('/administradores')
 def login_admin():
     return render_template('auth/login_admin.html')
+<<<<<<< HEAD
 @app.route('/registro_pacientes', methods=['GET', 'POST'])
 def registro_pacientes():
     if request.method == 'POST':
