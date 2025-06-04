@@ -1,0 +1,49 @@
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white">
+        <h6 class="m-0 fw-bold text-vitalis">
+            <i class="bi bi-list-check me-2"></i>Historial de Incapacidades
+        </h6>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-vitalis dropdown-toggle" type="button" 
+                    data-bs-toggle="dropdown">
+                <i class="bi bi-funnel me-1"></i>Filtrar
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                {% for filtro in ['Todas', 'Activas', 'En revisión', 'Rechazadas'] %}
+                    <li><a class="dropdown-item {% if loop.first %}active{% endif %}" href="#">{{ filtro }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr class="text-vitalis">
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Médico</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Ejemplo de datos -->
+                    <tr>
+                        <td>#INC-005</td>
+                        <td>15/06/2023</td>
+                        <td>Dra. Gómez</td>
+                        <td><span class="badge bg-success">Aprobada</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-vitalis" 
+                                    data-bs-toggle="tooltip" 
+                                    title="Descargar PDF">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

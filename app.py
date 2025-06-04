@@ -118,6 +118,15 @@ def registro_pacientes():
         # Lógica para procesar el registro (base de datos, etc.)
         return redirect(url_for('login_pacientes'))  # Redirige tras registro
     return render_template('auth/registro_pacientes.html')  # Renderiza el formulario
+@app.route('/dashboard_paciente')
+@login_required
+def dashboard_paciente():
+    # Obtener datos del paciente desde la BD
+    paciente_data = get_paciente_data(current_user.id)
+    incapacidades = get_incapacidades(paciente_data['id'])
+    return render_template('dashboard_paciente.html', 
+                         nombre=paciente_data['nombre'],
+                         incapacidades=incapacidades)
 
 
 if __name__ == '__main__':

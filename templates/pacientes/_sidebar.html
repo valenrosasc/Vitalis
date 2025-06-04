@@ -1,0 +1,46 @@
+<!-- Sidebar -->
+<div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-white shadow-sm" style="width: 280px;">
+    <div class="mb-4">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-person-circle fs-3 me-3 text-primary"></i>
+            <div>
+                <h5 class="mb-0">{{ current_user.nombre }}</h5>
+                <small class="text-muted">Paciente</small>
+            </div>
+        </div>
+    </div>
+    
+    <hr>
+    
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="#" class="nav-link active">
+                <i class="bi bi-house-door me-2"></i> Inicio
+            </a>
+        </li>
+        <li>
+            <a href="#" class="nav-link">
+                <i class="bi bi-file-earmark-medical me-2"></i> Incapacidades
+            </a>
+        </li>
+        <li>
+            <a href="#" class="nav-link">
+                <i class="bi bi-cloud-arrow-up me-2"></i> Subir documentos
+            </a>
+        </li>
+    </ul>
+    
+    <hr>
+    
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="bi bi-gear me-2"></i> Configuración
+        </a>
+        <ul class="dropdown-menu shadow">
+            <li><a class="dropdown-item" href="#">Perfil</a></li>
+            <li><a class="dropdown-item" href="#">Privacidad</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+        </ul>
+    </div>
+</div>

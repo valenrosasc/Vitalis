@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Vitalis{% endblock %}
+
+{% block extra_css %}
+<link href="{{ url_for('static', filename='css/pacientes.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-paciente">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between mb-4 gap-3">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-speedometer2 me-2"></i>Mi Panel</h2>
+            <p class="text-muted mb-0">Bienvenido/a, {{ current_user.nombre.split()[0] }}</p>
+        </div>
+        <button class="btn btn-vitalis align-self-start" data-bs-toggle="modal" data-bs-target="#formModal">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Incapacidad
+        </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+        {% include 'pacientes/components/_cards.html' %}
+    </div>
+
+    <!-- Table Section -->
+    <div class="dashboard-table">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 d-flex flex-column flex-md-row justify-content-between py-3">
+                <h3 class="h5 mb-2 mb-md-0">
+                    <i class="bi bi-file-earmark-medical me-2"></i>Historial Reciente
+                </h3>
+                <div class="d-flex gap-2">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bi bi-funnel me-1"></i>Filtrar
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item active" href="#">Todas</a></li>
+                            <li><a class="dropdown-item" href="#">Activas</a></li>
+                            <li><a class="dropdown-item" href="#">Pendientes</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 py-2">
+                {% include 'pacientes/components/_incapacidades_table.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            {% include 'pacientes/components/_form.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Inicialización de componentes
+document.addEventListener('DOMContentLoaded', function() {
+    // Tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    
+    // Filtrado básico
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const activeItems = this.closest('.dropdown-menu').querySelectorAll('.dropdown-item.active');
+            activeItems.forEach(active => active.classList.remove('active'));
+            this.classList.add('active');
+            // Aquí iría la lógica de filtrado real
+        });
+    });
+});
+</script>
+{% endblock %}

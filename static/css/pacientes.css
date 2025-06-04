@@ -1,0 +1,57 @@
+/* static/css/pacientes.css */
+/* Extiende los estilos base sin repetir definiciones */
+
+/* Componentes específicos del dashboard */
+.dashboard-paciente {
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Tarjetas resumen */
+.card-summary {
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+    height: 100%;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.card-summary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.card-active { border-left-color: #28a745; }
+.card-pending { border-left-color: #ffc107; }
+.card-rejected { border-left-color: #dc3545; }
+
+/* Tablas */
+.dashboard-table {
+    --table-border: #e0e0e0;
+}
+
+.dashboard-table .table {
+    margin-bottom: 0;
+}
+
+.dashboard-table .table thead th {
+    border-bottom-width: 2px;
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-paciente {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        border: none;
+    }
+}

@@ -1,0 +1,40 @@
+<div class="card border-vitalis shadow mb-4">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 text-vitalis">
+            <i class="bi bi-cloud-arrow-up me-2"></i>Subir Documento
+        </h5>
+    </div>
+    <div class="card-body">
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Tipo de documento</label>
+                <select class="form-select" required>
+                    <option value="" disabled selected>Seleccionar...</option>
+                    <option>Incapacidad Médica</option>
+                    <option>Exámenes de Laboratorio</option>
+                    <option>Receta Médica</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Archivo (PDF o imagen)</label>
+                <input type="file" class="form-control" accept=".pdf,.jpg,.png" required>
+                <div class="form-text">Máx. 5MB. Formatos permitidos: PDF, JPG, PNG</div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Observaciones</label>
+                <textarea class="form-control" rows="3" placeholder="Detalles adicionales..."></textarea>
+            </div>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="reset" class="btn btn-outline-secondary me-md-2">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-vitalis">
+                    <i class="bi bi-upload me-1"></i> Subir Documento
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
