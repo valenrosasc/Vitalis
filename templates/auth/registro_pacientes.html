@@ -1,0 +1,117 @@
+{% extends "base_auth.html" %}
+
+{% block content %}
+<!-- Navbar (usa el mismo que en tu dashboard) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-heart-pulse text-success"></i> <span class="fw-bold">Vitalis</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+<div class="container mt-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 500px;">
+        <div class="card-header bg-success text-white">
+            <h4 class="my-2"><i class="bi bi-person-plus"></i> Registro de Pacientes</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" novalidate>
+                <!-- Documento -->
+                <div class="mb-3">
+                    <label class="form-label">Documento de Identidad*</label>
+                    <input type="text" class="form-control" name="documento" 
+                           pattern="[0-9]{6,12}" 
+                           title="Mínimo 6 dígitos" required>
+                    <div class="form-text">Sin puntos ni espacios</div>
+                </div>
+
+                <!-- Nombre Completo -->
+                <div class="mb-3">
+                    <label class="form-label">Nombre Completo*</label>
+                    <input type="text" class="form-control" name="nombre" required>
+                </div>
+
+                <!-- EPS -->
+                <div class="mb-3">
+                    <label class="form-label">EPS*</label>
+                    <select class="form-select" name="eps" id="eps-select" required>
+                        <option value="" disabled selected>Selecciona tu EPS</option>
+                        <option value="Sura">Sura EPS</option>
+                        <option value="NuevaEPS">Nueva EPS</option>
+                        <option value="Sanitas">Sanitas</option>
+                        <option value="SaludTotal">Salud Total</option>
+                        <option value="Famisanar">Famisanar</option>
+                        <option value="SOS">SOS</option>
+                        <option value="Coomeva">Coomeva</option>
+                        <option value="Compensar">Compensar</option>
+                        <option value="Medimas">Medimás</option>
+                        <option value="Otra">Otra EPS</option>
+                    </select>
+                </div>
+
+                <!-- Campo dinámico para "Otra EPS" -->
+                <div class="mb-3" id="otra-eps-container" style="display:none;">
+                    <label class="form-label">Especifica tu EPS*</label>
+                    <input type="text" class="form-control" name="otra_eps">
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label">Correo Electrónico*</label>
+                    <input type="email" class="form-control" name="email" required>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="mb-3">
+                    <label class="form-label">Teléfono*</label>
+                    <input type="tel" class="form-control" name="telefono" 
+                           pattern="[0-9]{10}" 
+                           title="10 dígitos sin espacios" required>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="mb-3">
+                    <label class="form-label">Contraseña*</label>
+                    <input type="password" class="form-control" name="password" 
+                           minlength="8" required>
+                    <div class="form-text">Mínimo 8 caracteres</div>
+                </div>
+
+                <!-- Botón de submit -->
+                <button type="submit" class="btn btn-success w-100 mt-3">
+                    <i class="bi bi-check-circle"></i> Registrarse
+                </button>
+            </form>
+            
+            <!-- Enlace alternativo -->
+            <div class="text-center mt-3">
+                <p class="small">¿Ya tienes cuenta? 
+                    <a href="{{ url_for('login_pacientes') }}" class="text-success">Inicia sesión</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para mostrar campo "Otra EPS" -->
+<script>
+document.getElementById('eps-select').addEventListener('change', function() {
+    const otraEpsContainer = document.getElementById('otra-eps-container');
+    otraEpsContainer.style.display = this.value === 'Otra' ? 'block' : 'none';
+    if (this.value !== 'Otra') {
+        document.getElementsByName('otra_eps')[0].value = '';
+    }
+});
+</script>
+{% endblock %}
