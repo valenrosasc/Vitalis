@@ -1,5 +1,6 @@
 import MySQLdb
 import pyotp
+# ...existing code...
 
 # Conexión a la base de datos (MODIFICA aquí si tienes otros datos)
 conn = MySQLdb.connect(

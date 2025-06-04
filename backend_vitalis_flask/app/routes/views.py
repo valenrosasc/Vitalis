@@ -125,7 +125,8 @@ def dashboard_paciente():
     if 'paciente_id' not in session:
         flash("⚠️ Debes iniciar sesión primero.")
         return redirect(url_for('views.login_pacientes'))
-    return f"<h2>Bienvenido, {session['paciente_nombre']} (ID: {session['paciente_id']})</h2>"
+    nombre = session.get('paciente_nombre', 'Paciente')
+    return render_template('pacientes/dashboard_paciente.html', nombre=nombre)
 
 @views_bp.route('/dashboard/medico')
 def dashboard_medico():
@@ -140,5 +141,11 @@ def dashboard_admin():
         flash("⚠️ Debes iniciar sesión primero.", 'warning')
         return redirect(url_for('views.login_admin'))
     return f"<h2>Bienvenido, Administrador {session['admin_usuario']} (ID: {session['admin_id']})</h2>"
+
+@views_bp.route('/logout')
+def logout():
+    session.clear()
+    flash('Sesión cerrada correctamente.')
+    return redirect(url_for('views.login_pacientes'))
 
 print("✅ Blueprint de vistas registrado")
