@@ -20,32 +20,34 @@ def guia_pacientes():
 @views_bp.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
+        documento = request.form['documento']
         nombre = request.form['nombre']
-        correo = request.form['correo']
-        contraseña = request.form['contraseña']
+        eps = request.form['eps']
+        otra_eps = request.form.get('otra_eps', '')
+        email = request.form['email']
+        telefono = request.form['telefono']
+        password = request.form['password']
 
         cur = mysql.connection.cursor()
-
         # Verificar si el correo ya está registrado
-        cur.execute("SELECT id FROM pacientes WHERE correo = %s", (correo,))
+        cur.execute("SELECT id FROM pacientes WHERE email = %s", (email,))
         existe = cur.fetchone()
-
         if existe:
             flash("❌ Este correo ya está registrado. Intenta con otro.")
             return redirect(url_for('views.registro'))
-
-        # Insertar nuevo paciente si no existe
+        # Insertar nuevo paciente
         cur.execute(
-            "INSERT INTO pacientes (nombre, correo, contraseña) VALUES (%s, %s, %s)",
-            (nombre, correo, contraseña)
+            """
+            INSERT INTO pacientes (documento, nombre, eps, otra_eps, email, telefono, password)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
+            (documento, nombre, eps, otra_eps, email, telefono, password)
         )
         mysql.connection.commit()
         cur.close()
-
         flash("✅ ¡Paciente registrado exitosamente!")
         return redirect(url_for('views.login_pacientes'))
-
-    return render_template('register.html')
+    return render_template('auth/registro_pacientes.html')
 
 
 @views_bp.route('/login/pacientes', methods=['GET', 'POST'])
@@ -55,7 +57,7 @@ def login_pacientes():
         contraseña = request.form['contraseña']
 
         cur = mysql.connection.cursor()
-        cur.execute("SELECT id, nombre FROM pacientes WHERE correo = %s AND contraseña = %s", (correo, contraseña))
+        cur.execute("SELECT id, nombre FROM pacientes WHERE email = %s AND password = %s", (correo, contraseña))
         paciente = cur.fetchone()
         cur.close()
 
