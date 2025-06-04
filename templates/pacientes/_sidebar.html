@@ -4,7 +4,7 @@
         <div class="d-flex align-items-center">
             <i class="bi bi-person-circle fs-3 me-3 text-primary"></i>
             <div>
-                <h5 class="mb-0">{{ current_user.nombre }}</h5>
+                <h5 class="mb-0">{{ nombre }}</h5>
                 <small class="text-muted">Paciente</small>
             </div>
         </div>
@@ -40,7 +40,7 @@
             <li><a class="dropdown-item" href="#">Perfil</a></li>
             <li><a class="dropdown-item" href="#">Privacidad</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+            <li><a class="dropdown-item text-danger" href="{{ url_for('views.logout') }}">Cerrar sesión</a></li>
         </ul>
     </div>
 </div>
