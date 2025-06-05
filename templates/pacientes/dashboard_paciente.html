@@ -200,35 +200,92 @@
 <!-- ...existing code... -->
 
         <!-- Formulario para subir incapacidad -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-upload"></i> Subir nueva incapacidad
-            </div>
-            <div class="card-body">
-                <form id="uploadForm" method="post" enctype="multipart/form-data" action="#">
-                    <div class="mb-3">
-                        <label for="motivo" class="form-label">Motivo</label>
-                        <input type="text" class="form-control" id="motivo" name="motivo" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="fecha_inicio" class="form-label">Fecha inicio</label>
-                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="fecha_fin" class="form-label">Fecha fin</label>
-                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="archivo" class="form-label">Adjuntar archivo (PDF, JPG, PNG)</label>
-                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required>
-                    </div>
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-cloud-arrow-up"></i> Subir
-                    </button>
-                </form>
-            </div>
-        </div>
+        <!-- ...existing code... -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <i class="bi bi-upload"></i> Subir nueva incapacidad
     </div>
+    <div class="card-body">
+        <form id="uploadForm" method="post" enctype="multipart/form-data" action="#">
+            <div class="mb-3">
+                <label for="motivo" class="form-label">Motivo</label>
+                <select class="form-select" id="motivo" name="motivo" required>
+                    <option value="" selected disabled>Selecciona un motivo</option>
+                    <option value="enfermedad_general">Enfermedad general</option>
+                    <option value="accidente_laboral">Accidente laboral</option>
+                    <option value="licencia_maternidad">Licencia de maternidad</option>
+                    <option value="licencia_paternidad">Licencia de paternidad</option>
+                    <option value="enfermedad_profesional">Enfermedad profesional</option>
+                </select>
+            </div>
+            <div class="mb-3" id="documentosRequeridos" style="display:none;">
+                <label class="form-label">Documentos requeridos</label>
+                <ul class="list-group" id="listaDocumentos"></ul>
+            </div>
+            <div class="mb-3">
+                <label for="fecha_inicio" class="form-label">Fecha inicio</label>
+                <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+            </div>
+            <div class="mb-3">
+                <label for="fecha_fin" class="form-label">Fecha fin</label>
+                <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+            </div>
+            <div class="mb-3">
+                <label for="archivo" class="form-label">Adjuntar archivo (PDF, JPG, PNG)</label>
+                <input type="file" class="form-control" id="archivo" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required>
+            </div>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-cloud-arrow-up"></i> Subir
+            </button>
+        </form>
+    </div>
+</div>
+<!-- ...existing code... -->
+
+<script>
+    // Documentos requeridos según motivo
+    const documentosPorMotivo = {
+        enfermedad_general: [
+            "Certificado médico original",
+            "Historia clínica reciente",
+            "Epicrisis" 
+        ],
+        accidente_laboral: [
+            "Certificado médico original",
+            "Informe del accidente",
+            "Formato ARL"
+        ],
+        licencia_maternidad: [
+            "Certificado de embarazo",
+            "Historia clínica",
+            "Registro civil del bebé (si aplica)"
+        ],
+        licencia_paternidad: [
+            "Registro civil del bebé",
+            "Certificado laboral"
+        ],
+        enfermedad_profesional: [
+            "Certificado médico original",
+            "Dictamen de enfermedad profesional"
+        ]
+    };
+
+    document.getElementById('motivo').addEventListener('change', function() {
+        const motivo = this.value;
+        const documentos = documentosPorMotivo[motivo] || [];
+        const lista = document.getElementById('listaDocumentos');
+        lista.innerHTML = '';
+        documentos.forEach(doc => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = doc;
+            lista.appendChild(li);
+        });
+        document.getElementById('documentosRequeridos').style.display = documentos.length ? 'block' : 'none';
+    });
+</script>
+
+   </div>
 
     <!-- Footer -->
     <footer class="bg-dark text-white mt-5 pt-4 pb-3">
@@ -250,7 +307,7 @@
                             <a href="mailto:contacto@vitalis.com" class="text-white text-decoration-none">contacto@vitalis.com</a>
                         </li>
                         <li class="mb-2">
-                            <i class="bi bi-telephone me-2 text-success"></i> +57 300 123 4567
+                            <i class="bi bi-telephone me-2 text-success"></i> ‪+57 300 123 4567‬
                         </li>
                         <li>
                             <i class="bi bi-geo-alt me-2 text-success"></i> Bogotá, Colombia
@@ -284,3 +341,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
