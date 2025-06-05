@@ -1,30 +1,54 @@
 /* static/css/pacientes.css */
-/* Extiende los estilos base sin repetir definiciones */
-
-/* Componentes específicos del dashboard */
+/* Estilos base del dashboard */
 .dashboard-paciente {
     padding: 1.5rem;
     max-width: 1400px;
     margin: 0 auto;
 }
 
-/* Tarjetas resumen */
+/* Tarjetas resumen - Estructura base */
 .card-summary {
     transition: all 0.3s ease;
     border-left: 4px solid;
     height: 100%;
     border-radius: 0.5rem;
     overflow: hidden;
+    margin-bottom: 1rem; /* Asegura espacio inferior */
+    position: relative;
 }
 
+/* Efecto hover unificado */
 .card-summary:hover {
     transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
 }
 
+/* Colores de borde */
 .card-active { border-left-color: #28a745; }
 .card-pending { border-left-color: #ffc107; }
 .card-rejected { border-left-color: #dc3545; }
+
+/* Bordes izquierdos temáticos */
+.border-success { border-color: #2e8b57 !important; }
+.border-warning { border-color: #ffc107 !important; }
+.border-primary { border-color: #0d6efd !important; }
+.border-danger { border-color: #dc3545 !important; }
+
+/* Contenido de las tarjetas */
+.card-summary .card-body {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 1.25rem;
+}
+
+/* Links extendidos */
+.stretched-link::after {
+    background-color: transparent;
+}
+
+/* Asegurar mínimo de ancho para cards */
+.card-summary {
+    min-width: 250px;
+}
 
 /* Tablas */
 .dashboard-table {
@@ -45,6 +69,12 @@
     letter-spacing: 0.5px;
 }
 
+/* Efecto hover para dropdown */
+.dropdown-item:hover {
+    background-color: #f0f9f0 !important;
+    color: #2e8b57 !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .dashboard-paciente {
@@ -54,4 +84,14 @@
     .table-responsive {
         border: none;
     }
+    
+    .card-summary {
+        min-width: 100%; /* Ocupa todo el ancho en móviles */
+        margin-bottom: 1.5rem; /* Más espacio en móviles */
+    }
+}
+/* En tu CSS */
+.card-col {
+    margin-left: 12px;
+    margin-right: 12px;
 }

@@ -10,10 +10,9 @@ app.secret_key = 'clave_secreta_segura'
 
 # --- Añadí estas funciones para pacientes ---
 def get_paciente_data(usuario_id):
-    """Obtiene datos específicos del paciente desde la BD"""
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM pacientes WHERE usuario_id = %s', (usuario_id,))
+    cursor.execute('SELECT * FROM pacientes WHERE id = %s', (usuario_id,))
     data = cursor.fetchone()
     conn.close()
     return data
@@ -22,7 +21,7 @@ def get_incapacidades(paciente_id):
     """Obtiene incapacidades del paciente"""
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM incapacidades WHERE paciente_id = %s', (paciente_id,))
+    cursor.execute('SELECT * FROM incapacidades WHERE empleado_id = %s', (paciente_id,))
     data = cursor.fetchall()
     conn.close()
     return data
@@ -32,24 +31,17 @@ def get_db_connection():
     return mysql.connector.connect(
         host='localhost',
         user='root',
-        password='',
-        database='vitalis_db'
+        password='',  # O tu contraseña si tienes
+        database='vitalis_db',
+        port=3307     # <--- Agrega esta línea
     )
 
-
-def get_db_connection():
-    return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='',  # Por defecto, sin contraseña en XAMPP
-        database='vitalis_db'
-    )
 
 @app.route('/')
 def index():
     return render_template('home.html')  # sin verificar la sesión
 
-@app.route('/login', methods=['GET', 'POST'])
+'''@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
@@ -64,7 +56,7 @@ def login():
             session['nombre'] = user['nombre']
             return redirect(url_for('index'))
         return 'Credenciales inválidas'
-    return render_template('home.html')
+    return render_template('home.html')'''
 
 # @app.route('/registro', methods=['GET', 'POST'])
 # def registro():
@@ -89,7 +81,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('login_pacientes'))
 
 @app.route('/about')
 def about():
@@ -101,10 +93,37 @@ def guia_pacientes():
 @app.route('/faq')
 def faq():
     return render_template('faq.html')
-@app.route('/pacientes')  
+@app.route('/pacientes', methods=['GET', 'POST'])
 def login_pacientes():
-    return render_template('auth/login_pacientes.html')
-
+    error = None
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM pacientes WHERE email = %s', (email,))
+        user = cursor.fetchone()
+        if user:
+            # Si la contraseña está hasheada, usa check_password_hash
+            if user['password'].startswith('pbkdf2:') or user['password'].startswith('scrypt:'):
+                if check_password_hash(user['password'], password):
+                    session['usuario_id'] = user['id']
+                    session['nombre'] = user['nombre']
+                    conn.close()
+                    return redirect(url_for('dashboard_paciente'))
+            # Si la contraseña es texto plano y coincide, la migramos a hash
+            elif user['password'] == password:
+                new_hash = generate_password_hash(password)
+                cursor2 = conn.cursor()
+                cursor2.execute('UPDATE pacientes SET password = %s WHERE id = %s', (new_hash, user['id']))
+                conn.commit()
+                session['usuario_id'] = user['id']
+                session['nombre'] = user['nombre']
+                conn.close()
+                return redirect(url_for('dashboard_paciente'))
+        conn.close()
+        error = 'Credenciales inválidas'
+    return render_template('auth/login_pacientes.html', error=error)
 @app.route('/medicos')
 def login_medicos():
     return render_template('auth/login_medicos.html')
@@ -112,22 +131,41 @@ def login_medicos():
 @app.route('/administradores')
 def login_admin():
     return render_template('auth/login_admin.html')
-<<<<<<< HEAD
+
 @app.route('/registro_pacientes', methods=['GET', 'POST'])
 def registro_pacientes():
     if request.method == 'POST':
-        # Lógica para procesar el registro (base de datos, etc.)
-        return redirect(url_for('login_pacientes'))  # Redirige tras registro
-    return render_template('auth/registro_pacientes.html')  # Renderiza el formulario
+        documento = request.form['documento']
+        nombre = request.form['nombre']
+        eps = request.form['eps']
+        otra_eps = request.form.get('otra_eps', '')
+        email = request.form['email']
+        telefono = request.form['telefono']
+        password = generate_password_hash(request.form['password'])
+
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                'INSERT INTO pacientes (nombre, email, password, documento, eps, otra_eps, telefono) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+                (nombre, email, password, documento, eps, otra_eps, telefono)
+            )
+            conn.commit()
+            conn.close()
+            return redirect(url_for('login_pacientes'))
+        except Exception as e:
+            return f'Error al registrar: {str(e)}'
+    return render_template('auth/registro_pacientes.html')
 @app.route('/dashboard_paciente')
-@login_required
 def dashboard_paciente():
-    # Obtener datos del paciente desde la BD
-    paciente_data = get_paciente_data(current_user.id)
-    incapacidades = get_incapacidades(paciente_data['id'])
-    return render_template('dashboard_paciente.html', 
-                         nombre=paciente_data['nombre'],
-                         incapacidades=incapacidades)
+    paciente_id = session.get('usuario_id')
+    if not paciente_id:
+        return redirect(url_for('login_pacientes'))
+    paciente_data = get_paciente_data(paciente_id)
+    incapacidades = get_incapacidades(paciente_id)
+    return render_template('pacientes/dashboard_paciente.html', 
+                      nombre=paciente_data['nombre'],
+                      incapacidades=incapacidades)
 
 
 if __name__ == '__main__':

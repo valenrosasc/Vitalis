@@ -59,35 +59,35 @@
                 <div class="card-body p-4 p-md-5">
                     <form class="needs-validation" method="POST" novalidate>
                         <!-- Grupo Email -->
-                        <div class="mb-4">
-                            <label for="correo" class="form-label fw-bold text-success">Correo Electrónico</label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text bg-light">
-                                    <i class="bi bi-envelope text-muted"></i>
-                                </span>
-                                <input type="email" class="form-control py-2" id="correo" name="correo" placeholder="tucorreo@ejemplo.com" required>
-                                <div class="invalid-feedback">
-                                    Por favor ingresa un correo válido
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Grupo Contraseña -->
-                        <div class="mb-3">
-                            <label for="contraseña" class="form-label fw-bold text-success">Contraseña</label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text bg-light">
-                                    <i class="bi bi-lock text-muted"></i>
-                                </span>
-                                <input type="password" class="form-control py-2" id="contraseña" name="contraseña" placeholder="••••••••" required>
-                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <div class="invalid-feedback">
-                                    La contraseña es requerida
-                                </div>
-                            </div>
-                        </div>
+<div class="mb-4">
+    <label for="email" class="form-label fw-bold text-success">Correo Electrónico</label>
+    <div class="input-group has-validation">
+        <span class="input-group-text bg-light">
+            <i class="bi bi-envelope text-muted"></i>
+        </span>
+        <input type="email" class="form-control py-2" id="email" name="email" placeholder="tucorreo@ejemplo.com" required>
+        <div class="invalid-feedback">
+            Por favor ingresa un correo válido
+        </div>
+    </div>
+</div>
+
+<!-- Grupo Contraseña -->
+<div class="mb-3">
+    <label for="password" class="form-label fw-bold text-success">Contraseña</label>
+    <div class="input-group has-validation">
+        <span class="input-group-text bg-light">
+            <i class="bi bi-lock text-muted"></i>
+        </span>
+        <input type="password" class="form-control py-2" id="password" name="password" placeholder="••••••••" required>
+        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+            <i class="bi bi-eye"></i>
+        </button>
+        <div class="invalid-feedback">
+            La contraseña es requerida
+        </div>
+    </div>
+</div>
                         
                         <!-- Recordar + Recuperar -->
                         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -107,6 +107,10 @@
                             <i class="bi bi-box-arrow-in-right me-2"></i> Ingresar
                         </button>
                         
+                        {% if error %}
+                            <div class="alert alert-danger mt-2">{{ error }}</div>
+                        {% endif %}
+
                         <!-- Divider con Texto -->
                         <div class="position-relative my-4">
                             <hr class="border-1">
@@ -118,7 +122,7 @@
                         <!-- Botón de Registro -->
                         <div class="text-center">
                             <p class="small text-muted mb-2">¿No tienes una cuenta?</p>
-                            <a href="{{ url_for('views.registro') }}" 
+                            <a href="{{ url_for('registro_pacientes') }}"
                                class="btn btn-outline-success btn-sm px-4">
                                 <i class="bi bi-person-plus me-2"></i>Regístrate
                             </a>

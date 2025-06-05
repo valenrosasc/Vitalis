@@ -1,84 +1,286 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard | Vitalis{% endblock %}
-
-{% block extra_css %}
-<link href="{{ url_for('static', filename='css/pacientes.css') }}" rel="stylesheet">
-{% endblock %}
-
-{% block content %}
-<div class="dashboard-paciente">
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between mb-4 gap-3">
-        <div>
-            <h2 class="mb-1"><i class="bi bi-speedometer2 me-2"></i>Mi Panel</h2>
-            <p class="text-muted mb-0">Bienvenido/a, {{ nombre.split()[0] }}</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Paciente - Vitalis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Tu CSS personalizado -->
+    <link href="{{ url_for('static', filename='css/pacientes.css') }}" rel="stylesheet">
+    <style>
+        .card-summary {
+            transition: all 0.3s;
+            border-left: 4px solid;
+            border-radius: 0.5rem;
+            min-height: 140px;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .hover-effect:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar superior -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1"><i class="bi bi-heart-pulse"></i> Vitalis</span>
+            <div class="d-flex align-items-center">
+                <span class="me-3 fw-bold text-success">Hola, {{ nombre }}</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                </a>
+            </div>
         </div>
-        <button class="btn btn-vitalis align-self-start" data-bs-toggle="modal" data-bs-target="#formModal">
-            <i class="bi bi-plus-circle me-1"></i> Nueva Incapacidad
-        </button>
-    </div>
+    </nav>
 
-    <!-- Stats Cards -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
-        {% include 'pacientes/components/_cards.html' %}
-    </div>
-
-    <!-- Table Section -->
-    <div class="dashboard-table">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 d-flex flex-column flex-md-row justify-content-between py-3">
-                <h3 class="h5 mb-2 mb-md-0">
-                    <i class="bi bi-file-earmark-medical me-2"></i>Historial Reciente
-                </h3>
-                <div class="d-flex gap-2">
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="bi bi-funnel me-1"></i>Filtrar
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item active" href="#">Todas</a></li>
-                            <li><a class="dropdown-item" href="#">Activas</a></li>
-                            <li><a class="dropdown-item" href="#">Pendientes</a></li>
-                        </ul>
+    <div class="container">
+        <!-- Tarjetas resumen -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-4 justify-content-center">
+            <!-- Activas -->
+            <div class="col">
+                <div class="card card-summary h-100 shadow-sm border-start border-4 border-success hover-effect">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="text-uppercase text-muted mb-1">
+                                    <i class="bi bi-clock-history me-1"></i>Activas
+                                </h6>
+                                <h2 class="mb-0">
+                                    {{ incapacidades|selectattr('estado', 'equalto', 'activa')|list|length }}
+                                </h2>
+                                <small class="text-muted">Actualmente vigentes</small>
+                            </div>
+                            <i class="bi bi-check-circle-fill text-success fs-3 opacity-75"></i>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body px-0 py-2">
-                {% include 'pacientes/components/_incapacidades_table.html' %}
+            <!-- En revisión -->
+            <div class="col">
+                <div class="card card-summary h-100 shadow-sm border-start border-4 border-warning hover-effect">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="text-uppercase text-muted mb-1">
+                                    <i class="bi bi-hourglass-split me-1"></i>En Revisión
+                                </h6>
+                                <h2 class="mb-0">
+                                    {{ incapacidades|selectattr('estado', 'equalto', 'en_revision')|list|length }}
+                                </h2>
+                                <small class="text-muted">Pendientes</small>
+                            </div>
+                            <i class="bi bi-exclamation-triangle-fill text-warning fs-3 opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Aprobadas -->
+            <div class="col">
+                <div class="card card-summary h-100 shadow-sm border-start border-4 border-primary hover-effect">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="text-uppercase text-muted mb-1">
+                                    <i class="bi bi-file-earmark-check me-1"></i>Aprobadas
+                                </h6>
+                                <h2 class="mb-0">
+                                    {{ incapacidades|selectattr('estado', 'equalto', 'aprobada')|list|length }}
+                                </h2>
+                                <small class="text-muted">Este mes</small>
+                            </div>
+                            <i class="bi bi-file-earmark-medical-fill text-primary fs-3 opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Por expirar -->
+            <div class="col">
+                <div class="card card-summary h-100 shadow-sm border-start border-4 border-danger hover-effect">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="text-uppercase text-muted mb-1">
+                                    <i class="bi bi-exclamation-octagon me-1"></i>Por Expirar
+                                </h6>
+                                <h2 class="mb-0">
+                                    {{ incapacidades|selectattr('estado', 'equalto', 'por_expirar')|list|length }}
+                                </h2>
+                                <small class="text-muted">Vence pronto</small>
+                            </div>
+                            <i class="bi bi-calendar-x-fill text-danger fs-3 opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ...existing code... -->
+<!-- Tabla de incapacidades -->
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-table"></i> Mis incapacidades
+    </div>
+    <div class="card-body table-responsive">
+        <table class="table table-hover align-middle" id="incapacidadesTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha inicio</th>
+                    <th>Fecha fin</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                    <th>Archivo</th>
+                    <th>Comentarios</th> <!-- Nueva columna -->
+                    <th>Acciones</th> <!-- Nueva columna -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for incapacidad in incapacidades %}
+                <tr data-status="{{ incapacidad.estado }}">
+                    <td>{{ loop.index }}</td>
+                    <td>{{ incapacidad.fecha_inicio.strftime('%d/%m/%Y') if incapacidad.fecha_inicio else '' }}</td>
+                    <td>{{ incapacidad.fecha_fin.strftime('%d/%m/%Y') if incapacidad.fecha_fin else '' }}</td>
+                    <td>{{ incapacidad.motivo }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if incapacidad.estado == 'activa' %}bg-success
+                            {% elif incapacidad.estado == 'en_revision' %}bg-warning text-dark
+                            {% elif incapacidad.estado == 'aprobada' %}bg-primary
+                            {% elif incapacidad.estado == 'por_expirar' %}bg-danger
+                            {% elif incapacidad.estado == 'rechazada' %}bg-danger
+                            {% else %}bg-secondary{% endif %}">
+                            {{ incapacidad.estado|capitalize }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if incapacidad.archivo_url %}
+                            <a href="{{ incapacidad.archivo_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-file-earmark-arrow-down"></i> Ver
+                            </a>
+                        {% else %}
+                            <span class="text-muted">No adjunto</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if incapacidad.comentario %}
+                            <span data-bs-toggle="tooltip" title="{{ incapacidad.comentario }}">
+                                <i class="bi bi-info-circle text-info"></i>
+                            </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if incapacidad.estado == 'rechazada' %}
+                            <form method="post" enctype="multipart/form-data" action="{{ url_for('apelar_incapacidad', id=incapacidad.id) }}">
+                                <input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required>
+                                <button type="submit" class="btn btn-sm btn-danger mt-1">Apelar</button>
+                            </form>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted">No tienes incapacidades registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- ...existing code... -->
+
+        <!-- Formulario para subir incapacidad -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-upload"></i> Subir nueva incapacidad
+            </div>
+            <div class="card-body">
+                <form id="uploadForm" method="post" enctype="multipart/form-data" action="#">
+                    <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo</label>
+                        <input type="text" class="form-control" id="motivo" name="motivo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fecha_inicio" class="form-label">Fecha inicio</label>
+                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fecha_fin" class="form-label">Fecha fin</label>
+                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="archivo" class="form-label">Adjuntar archivo (PDF, JPG, PNG)</label>
+                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-cloud-arrow-up"></i> Subir
+                    </button>
+                </form>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="formModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            {% include 'pacientes/components/_form.html' %}
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5 pt-4 pb-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-success mb-3">
+                        <i class="bi bi-heart-pulse"></i> Vitalis
+                    </h5>
+                    <p class="small">
+                        Sistema de gestión de incapacidades médicas. Innovando en salud digital para facilitar tus procesos.
+                    </p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-success mb-3">Contacto</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-envelope me-2 text-success"></i>
+                            <a href="mailto:contacto@vitalis.com" class="text-white text-decoration-none">contacto@vitalis.com</a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-telephone me-2 text-success"></i> +57 300 123 4567
+                        </li>
+                        <li>
+                            <i class="bi bi-geo-alt me-2 text-success"></i> Bogotá, Colombia
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-success mb-3">Síguenos</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white fs-4"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-white fs-4"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                    <div class="mt-3">
+                        <h6 class="text-success mb-1">Horario</h6>
+                        <p class="small mb-0">Lunes a Viernes: 8:00 AM - 6:00 PM</p>
+                        <p class="small">Sábados: 9:00 AM - 1:00 PM</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top pt-3 text-center">
+                <p class="small mb-0">
+                    &copy; 2025 Vitalis. Todos los derechos reservados.
+                </p>
+            </div>
         </div>
-    </div>
-</div>
-{% endblock %}
+    </footer>
 
-{% block extra_js %}
-<script>
-// Inicialización de componentes
-document.addEventListener('DOMContentLoaded', function() {
-    // Tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-    
-    // Filtrado básico
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const activeItems = this.closest('.dropdown-menu').querySelectorAll('.dropdown-item.active');
-            activeItems.forEach(active => active.classList.remove('active'));
-            this.classList.add('active');
-            // Aquí iría la lógica de filtrado real
-        });
-    });
-});
-</script>
-{% endblock %}
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
