@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Lista de Incapacidades</h2>
+    <table class="table table-bordered table-hover mt-3">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Paciente (ID)</th>
+                <th>Motivo</th>
+                <th>Fecha inicio</th>
+                <th>Fecha fin</th>
+                <th>Estado</th>
+                <th>Documento</th>
+                <th>Subida el</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incapacidad in incapacidades %}
+            <tr>
+                <td>{{ incapacidad.id }}</td>
+                <td>{{ incapacidad.empleado_id }}</td>
+                <td>{{ incapacidad.motivo }}</td>
+                <td>{{ incapacidad.fecha_inicio }}</td>
+                <td>{{ incapacidad.fecha_fin }}</td>
+                <td>{{ incapacidad.estado|default('N/A') }}</td>
+                <td>
+                    {% if incapacidad.archivo_url %}
+                        <a href="{{ incapacidad.archivo_url }}" target="_blank" download>Descargar</a>
+                    {% else %}
+                        No adjunto
+                    {% endif %}
+                </td>
+                <td>{{ incapacidad.creado_en|default('') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

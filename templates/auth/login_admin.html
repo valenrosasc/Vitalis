@@ -2,7 +2,7 @@
 {% block title %}Vitalis - Administración{% endblock %}
 
 {% block content %}
-<!-- Navbar (usa el mismo que en tu dashboard) -->
+<!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="/">
@@ -38,8 +38,7 @@
                 </div>
                 
                 <!-- Cuerpo del formulario -->
-                <div class="card-body p-4 p-sm-5">
-                    <form class="needs-validation" novalidate>
+                <div class="card-body p-4 p-sm-5">                    <form method="POST" class="needs-validation" novalidate>
                         <!-- Campo Usuario -->
                         <div class="mb-4">
                             <label for="usuario" class="form-label" style="color: #e98c22; font-weight: bold;">Usuario Admin</label>
@@ -47,19 +46,18 @@
                                 <span class="input-group-text bg-light">
                                     <i class="bi bi-person-fill-gear" style="color: #e98c22;"></i>
                                 </span>
-                                <input type="text" class="form-control py-2" id="usuario" 
-                                       placeholder="Ej: admin.sede1" required>
+                                <input type="text" class="form-control py-2" id="usuario" name="usuario"
+                                       placeholder="Ej: admin1" required>
                             </div>
                         </div>
-                        
-                        <!-- Campo Contraseña -->
+                          <!-- Campo Contraseña -->
                         <div class="mb-4">
                             <label for="password" class="form-label" style="color: #e98c22; font-weight: bold;">Contraseña Maestra</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="bi bi-key-fill" style="color: #e98c22;"></i>
                                 </span>
-                                <input type="password" class="form-control py-2" id="password" 
+                                <input type="password" class="form-control py-2" id="password" name="password"
                                        placeholder="••••••••" required>
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="bi bi-eye"></i>
@@ -67,17 +65,17 @@
                             </div>
                         </div>
                         
-                        <!-- Campo 2FA -->
+                        <!-- Campo Token -->
                         <div class="mb-4">
-                            <label for="codigo2fa" class="form-label" style="color: #e98c22; font-weight: bold;">Código 2FA</label>
+                            <label for="token" class="form-label" style="color: #e98c22; font-weight: bold;">Token de autenticación</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="bi bi-phone-fill" style="color: #e98c22;"></i>
                                 </span>
-                                <input type="text" class="form-control py-2" id="codigo2fa" 
-                                       placeholder="Código de 6 dígitos" required>
+                                <input type="password" class="form-control py-2" id="token" name="token" 
+                                       placeholder="JBSWY3DPEHPK3PXP" value="JBSWY3DPEHPK3PXP" required readonly>
                             </div>
-                            <small class="text-muted">Usa Google Authenticator o similar</small>
+                            <small class="text-muted">Token fijo del sistema</small>
                         </div>
                         
                         <!-- Botón de ingreso -->

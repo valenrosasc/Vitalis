@@ -30,10 +30,10 @@ def get_incapacidades(paciente_id):
 def get_db_connection():
     return mysql.connector.connect(
         host='localhost',
-        user='root',
-        password='',  # O tu contraseña si tienes
-        database='vitalis_db',
-        port=3307     # <--- Agrega esta línea
+        user='vitalis_user',
+        password='vitalis123',  # O tu contraseña si tienes
+        database='vitalis',
+        port=3306     # <--- Agrega esta línea
     )
 
 
@@ -128,8 +128,43 @@ def login_pacientes():
 def login_medicos():
     return render_template('auth/login_medicos.html')
 
-@app.route('/administradores')
+@app.route('/administradores', methods=['GET', 'POST'])
 def login_admin():
+    if request.method == 'POST':
+        usuario = request.form['usuario']
+        password = request.form['password']
+        token = request.form['token']
+        ADMIN_SECRET = 'JBSWY3DPEHPK3PXP'
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM admins WHERE usuario = %s', (usuario,))
+        admin = cursor.fetchone()
+
+        if admin:
+            # Si la contraseña está hasheada
+            if admin['contraseña'].startswith('pbkdf2:') or admin['contraseña'].startswith('scrypt:'):
+                if check_password_hash(admin['contraseña'], password):
+                    if token == ADMIN_SECRET:
+                        session['admin_id'] = admin['id']
+                        session['admin_nombre'] = admin['usuario']
+                        conn.close()
+                        return redirect(url_for('dashboard_admin'))
+                    else:
+                        conn.close()
+                        return render_template('auth/login_admin.html', error='Token inválido')
+            # Si la contraseña es texto plano y coincide, la migramos a hash
+            elif admin['contraseña'] == password:
+                new_hash = generate_password_hash(password)
+                cursor2 = conn.cursor()
+                cursor2.execute('UPDATE admins SET contraseña = %s WHERE id = %s', (new_hash, admin['id']))
+                conn.commit()
+                session['admin_id'] = admin['id']
+                session['admin_nombre'] = admin['usuario']
+                conn.close()
+                return redirect(url_for('dashboard_admin'))
+        conn.close()
+        return render_template('auth/login_admin.html', error='Credenciales inválidas')
     return render_template('auth/login_admin.html')
 
 @app.route('/registro_pacientes', methods=['GET', 'POST'])
@@ -166,6 +201,21 @@ def dashboard_paciente():
     return render_template('pacientes/dashboard_paciente.html', 
                       nombre=paciente_data['nombre'],
                       incapacidades=incapacidades)
+@app.route('/dashboard_admin')
+def dashboard_admin():
+    admin_id = session.get('admin_id')
+    admin_nombre = session.get('admin_nombre')
+    if not admin_id:
+        return redirect(url_for('login_admin'))
+    # Resumen de ejemplo para evitar error en el template
+    resumen = {
+        'activas': 0,
+        'en_revision': 0,
+        'por_expirar': 0,
+        'aprobadas': 0
+    }
+    incapacidades = []  # Puedes poblar esto con datos reales después
+    return render_template('administradores/dashboard_admin.html', admin_nombre=admin_nombre, resumen=resumen, incapacidades=incapacidades)
 
 
 if __name__ == '__main__':
