@@ -121,169 +121,163 @@
             </div>
         </div>
 
-        <!-- ...existing code... -->
-<!-- Tabla de incapacidades -->
-<div class="card mb-4">
-    <div class="card-header bg-success text-white">
-        <i class="bi bi-table"></i> Mis incapacidades
-    </div>
-    <div class="card-body table-responsive">
-        <table class="table table-hover align-middle" id="incapacidadesTable">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Fecha inicio</th>
-                    <th>Fecha fin</th>
-                    <th>Motivo</th>
-                    <th>Estado</th>
-                    <th>Archivo</th>
-                    <th>Comentarios</th> <!-- Nueva columna -->
-                    <th>Acciones</th> <!-- Nueva columna -->
-                </tr>
-            </thead>
-            <tbody>
-                {% for incapacidad in incapacidades %}
-                <tr data-status="{{ incapacidad.estado }}">
-                    <td>{{ loop.index }}</td>
-                    <td>{{ incapacidad.fecha_inicio.strftime('%d/%m/%Y') if incapacidad.fecha_inicio else '' }}</td>
-                    <td>{{ incapacidad.fecha_fin.strftime('%d/%m/%Y') if incapacidad.fecha_fin else '' }}</td>
-                    <td>{{ incapacidad.motivo }}</td>
-                    <td>
-                        <span class="badge 
-                            {% if incapacidad.estado == 'activa' %}bg-success
-                            {% elif incapacidad.estado == 'en_revision' %}bg-warning text-dark
-                            {% elif incapacidad.estado == 'aprobada' %}bg-primary
-                            {% elif incapacidad.estado == 'por_expirar' %}bg-danger
-                            {% elif incapacidad.estado == 'rechazada' %}bg-danger
-                            {% else %}bg-secondary{% endif %}">
-                            {{ incapacidad.estado|capitalize }}
-                        </span>
-                    </td>
-                    <td>
-                        {% if incapacidad.archivo_url %}
-                            <a href="{{ incapacidad.archivo_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-file-earmark-arrow-down"></i> Ver
-                            </a>
+        <!-- Tabla de incapacidades -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-table"></i> Mis incapacidades
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover align-middle" id="incapacidadesTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fecha inicio</th>
+                            <th>Fecha fin</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                            <th>Archivo</th>
+                            <th>Comentarios</th> <!-- Nueva columna -->
+                            <th>Acciones</th> <!-- Nueva columna -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for incapacidad in incapacidades %}
+                        <tr data-status="{{ incapacidad.estado }}">
+                            <td>{{ loop.index }}</td>
+                            <td>{{ incapacidad.fecha_inicio.strftime('%d/%m/%Y') if incapacidad.fecha_inicio else '' }}</td>
+                            <td>{{ incapacidad.fecha_fin.strftime('%d/%m/%Y') if incapacidad.fecha_fin else '' }}</td>
+                            <td>{{ incapacidad.motivo }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if incapacidad.estado == 'activa' %}bg-success
+                                    {% elif incapacidad.estado == 'en_revision' %}bg-warning text-dark
+                                    {% elif incapacidad.estado == 'aprobada' %}bg-primary
+                                    {% elif incapacidad.estado == 'por_expirar' %}bg-danger
+                                    {% elif incapacidad.estado == 'rechazada' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ incapacidad.estado|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if incapacidad.archivo_url %}
+                                    <a href="{{ incapacidad.archivo_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-file-earmark-arrow-down"></i> Ver
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">No adjunto</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if incapacidad.estado == 'rechazada' and incapacidad.comentario %}
+                                    <div class="alert alert-danger p-2 mb-0" style="font-size:0.95em;">
+                                        <i class="bi bi-x-octagon"></i> <strong>Rechazada:</strong> {{ incapacidad.comentario }}
+                                    </div>
+                                {% elif incapacidad.comentario %}
+                                    <span data-bs-toggle="tooltip" title="{{ incapacidad.comentario }}">
+                                        <i class="bi bi-info-circle text-info"></i>
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {# Elimino el formulario de apelación que usa url_for('apelar_incapacidad') porque esa ruta no existe y causa error #}
+                                {# <form method="post" enctype="multipart/form-data" action="{{ url_for('apelar_incapacidad', id=incapacidad.id) }}"> ... </form> #}
+                            </td>
+                        </tr>
                         {% else %}
-                            <span class="text-muted">No adjunto</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if incapacidad.comentario %}
-                            <span data-bs-toggle="tooltip" title="{{ incapacidad.comentario }}">
-                                <i class="bi bi-info-circle text-info"></i>
-                            </span>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if incapacidad.estado == 'rechazada' %}
-                            <form method="post" enctype="multipart/form-data" action="{{ url_for('apelar_incapacidad', id=incapacidad.id) }}">
-                                <input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required>
-                                <button type="submit" class="btn btn-sm btn-danger mt-1">Apelar</button>
-                            </form>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="8" class="text-center text-muted">No tienes incapacidades registradas.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-<!-- ...existing code... -->
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">No tienes incapacidades registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <!-- Formulario para subir incapacidad -->
-        <!-- ...existing code... -->
-<div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-        <i class="bi bi-upload"></i> Subir nueva incapacidad
-    </div>
-    <div class="card-body">
-        <form id="uploadForm" method="post" enctype="multipart/form-data" action="#">
-            <div class="mb-3">
-                <label for="motivo" class="form-label">Motivo</label>
-                <select class="form-select" id="motivo" name="motivo" required>
-                    <option value="" selected disabled>Selecciona un motivo</option>
-                    <option value="enfermedad_general">Enfermedad general</option>
-                    <option value="accidente_laboral">Accidente laboral</option>
-                    <option value="licencia_maternidad">Licencia de maternidad</option>
-                    <option value="licencia_paternidad">Licencia de paternidad</option>
-                    <option value="enfermedad_profesional">Enfermedad profesional</option>
-                </select>
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-upload"></i> Subir nueva incapacidad
             </div>
-            <div class="mb-3" id="documentosRequeridos" style="display:none;">
-                <label class="form-label">Documentos requeridos</label>
-                <ul class="list-group" id="listaDocumentos"></ul>
+            <div class="card-body">
+                <form id="uploadForm" method="post" enctype="multipart/form-data" action="{{ url_for('subir_incapacidad') }}">
+                    <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo</label>
+                        <select class="form-select" id="motivo" name="motivo" required>
+                            <option value="" selected disabled>Selecciona un motivo</option>
+                            <option value="enfermedad_general">Enfermedad general</option>
+                            <option value="accidente_laboral">Accidente laboral</option>
+                            <option value="licencia_maternidad">Licencia de maternidad</option>
+                            <option value="licencia_paternidad">Licencia de paternidad</option>
+                            <option value="enfermedad_profesional">Enfermedad profesional</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="documentosRequeridos" style="display:none;">
+                        <label class="form-label">Documentos requeridos</label>
+                        <ul class="list-group" id="listaDocumentos"></ul>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fecha_inicio" class="form-label">Fecha inicio</label>
+                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fecha_fin" class="form-label">Fecha fin</label>
+                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="archivo" class="form-label">Adjuntar archivo (PDF, JPG, PNG)</label>
+                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-cloud-arrow-up"></i> Subir
+                    </button>
+                </form>
             </div>
-            <div class="mb-3">
-                <label for="fecha_inicio" class="form-label">Fecha inicio</label>
-                <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
-            </div>
-            <div class="mb-3">
-                <label for="fecha_fin" class="form-label">Fecha fin</label>
-                <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
-            </div>
-            <div class="mb-3">
-                <label for="archivo" class="form-label">Adjuntar archivo (PDF, JPG, PNG)</label>
-                <input type="file" class="form-control" id="archivo" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required>
-            </div>
-            <button type="submit" class="btn btn-success">
-                <i class="bi bi-cloud-arrow-up"></i> Subir
-            </button>
-        </form>
-    </div>
-</div>
-<!-- ...existing code... -->
+        </div>
 
-<script>
-    // Documentos requeridos según motivo
-    const documentosPorMotivo = {
-        enfermedad_general: [
-            "Certificado médico original",
-            "Historia clínica reciente",
-            "Epicrisis" 
-        ],
-        accidente_laboral: [
-            "Certificado médico original",
-            "Informe del accidente",
-            "Formato ARL"
-        ],
-        licencia_maternidad: [
-            "Certificado de embarazo",
-            "Historia clínica",
-            "Registro civil del bebé (si aplica)"
-        ],
-        licencia_paternidad: [
-            "Registro civil del bebé",
-            "Certificado laboral"
-        ],
-        enfermedad_profesional: [
-            "Certificado médico original",
-            "Dictamen de enfermedad profesional"
-        ]
-    };
+        <script>
+            // Documentos requeridos según motivo
+            const documentosPorMotivo = {
+                enfermedad_general: [
+                    "Certificado médico original",
+                    "Historia clínica reciente",
+                    "Epicrisis" 
+                ],
+                accidente_laboral: [
+                    "Certificado médico original",
+                    "Informe del accidente",
+                    "Formato ARL"
+                ],
+                licencia_maternidad: [
+                    "Certificado de embarazo",
+                    "Historia clínica",
+                    "Registro civil del bebé (si aplica)"
+                ],
+                licencia_paternidad: [
+                    "Registro civil del bebé",
+                    "Certificado laboral"
+                ],
+                enfermedad_profesional: [
+                    "Certificado médico original",
+                    "Dictamen de enfermedad profesional"
+                ]
+            };
 
-    document.getElementById('motivo').addEventListener('change', function() {
-        const motivo = this.value;
-        const documentos = documentosPorMotivo[motivo] || [];
-        const lista = document.getElementById('listaDocumentos');
-        lista.innerHTML = '';
-        documentos.forEach(doc => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item';
-            li.textContent = doc;
-            lista.appendChild(li);
-        });
-        document.getElementById('documentosRequeridos').style.display = documentos.length ? 'block' : 'none';
-    });
-</script>
+            document.getElementById('motivo').addEventListener('change', function() {
+                const motivo = this.value;
+                const documentos = documentosPorMotivo[motivo] || [];
+                const lista = document.getElementById('listaDocumentos');
+                lista.innerHTML = '';
+                documentos.forEach(doc => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = doc;
+                    lista.appendChild(li);
+                });
+                document.getElementById('documentosRequeridos').style.display = documentos.length ? 'block' : 'none';
+            });
+        </script>
 
    </div>
 

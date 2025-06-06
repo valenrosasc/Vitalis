@@ -84,10 +84,46 @@
                             <td>{{ incapacidad.fecha_inicio }}</td>
                             <td>{{ incapacidad.fecha_fin }}</td>
                             <td>
-                                <a href="{{ url_for('ver_incapacidad', id=incapacidad.id) }}" class="btn btn-sm btn-info">Ver</a>
-                                <a href="{{ url_for('editar_incapacidad', id=incapacidad.id) }}" class="btn btn-sm btn-warning">Editar</a>
-                                {% if incapacidad.estado == 'rechazada' %}
-                                    <a href="{{ url_for('gestionar_rechazo', id=incapacidad.id) }}" class="btn btn-sm btn-danger">Gestionar rechazo</a>
+                                {% if incapacidad.estado == 'aprobada' or incapacidad.estado == 'rechazada' %}
+                                    <span class="badge bg-secondary">No editable</span>
+                                    {% if incapacidad.estado == 'rechazada' and incapacidad.comentario %}
+                                        <div class="small text-danger mt-1"><i class="bi bi-x-octagon"></i> {{ incapacidad.comentario }}</div>
+                                    {% endif %}
+                                {% else %}
+                                    <form method="post" action="{{ url_for('actualizar_estado_incapacidad', incapacidad_id=incapacidad.id) }}" class="d-inline">
+                                        <select name="nuevo_estado" class="form-select form-select-sm d-inline w-auto" onchange="mostrarComentario(this, 'comentario-{{ incapacidad.id }}')">
+                                            <option value="activa" {% if incapacidad.estado == 'activa' %}selected{% endif %}>Activa</option>
+                                            <option value="en_revision" {% if incapacidad.estado == 'en_revision' %}selected{% endif %}>En revisión</option>
+                                            <option value="por_expirar" {% if incapacidad.estado == 'por_expirar' %}selected{% endif %}>Por expirar</option>
+                                            <option value="aprobada" {% if incapacidad.estado == 'aprobada' %}selected{% endif %}>Aprobada</option>
+                                            <option value="rechazada" {% if incapacidad.estado == 'rechazada' %}selected{% endif %}>Rechazada</option>
+                                        </select>
+                                        <input type="text" name="comentario" id="comentario-{{ incapacidad.id }}" class="form-control form-control-sm mt-1" placeholder="Motivo del rechazo" style="display: {% if incapacidad.estado == 'rechazada' %}block{% else %}none{% endif %};" maxlength="255">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary ms-1">Actualizar</button>
+                                    </form>
+                                    <script>
+                                    function mostrarComentario(select, inputId) {
+                                        var input = document.getElementById(inputId);
+                                        if (select.value === 'rechazada') {
+                                            input.style.display = 'block';
+                                            input.required = true;
+                                        } else {
+                                            input.style.display = 'none';
+                                            input.required = false;
+                                            input.value = '';
+                                        }
+                                    }
+                                    </script>
+                                {% endif %}
+                                {% if incapacidad.archivo_url %}
+                                    <a href="{{ incapacidad.archivo_url }}" target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i> Ver
+                                    </a>
+                                    <a href="{{ incapacidad.archivo_url }}" class="btn btn-sm btn-success" download>
+                                        <i class="bi bi-download"></i> Descargar
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">No adjunto</span>
                                 {% endif %}
                             </td>
                         </tr>
