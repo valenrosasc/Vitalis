@@ -1,13 +1,32 @@
-<!-- dashboard_admin.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrador - Vitalis</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .card-header {
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+            border-bottom: 3px solid #0d6efd;
+        }
+        .dashboard-card {
+            transition: transform 0.2s;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.35em 0.65em;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-light">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container-fluid">
@@ -21,127 +40,522 @@
 
     <div class="container-fluid">
         <!-- Resumen rápido -->
-        <div class="row mb-4">
-            <div class="col">
-                <div class="card text-bg-success mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Incapacidades activas</h5>
-                        <p class="card-text display-6">{{ resumen.activas }}</p>
+        <div class="container my-4">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="card dashboard-card shadow-sm border border-2 border-secondary-subtle rounded-4 h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-2">
+                                <i class="bi bi-activity text-success" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <h6 class="text-muted">Incapacidades activas</h6>
+                            <div class="display-5 fw-bold text-success">{{ resumen.activas }}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="card text-bg-warning mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">En revisión</h5>
-                        <p class="card-text display-6">{{ resumen.en_revision }}</p>
+                <div class="col-md-3">
+                    <div class="card dashboard-card shadow-sm border border-2 border-secondary-subtle rounded-4 h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-2">
+                                <i class="bi bi-hourglass-split text-warning" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <h6 class="text-muted">En revisión</h6>
+                            <div class="display-5 fw-bold text-warning">{{ resumen.en_revision }}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="card text-bg-danger mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Por expirar</h5>
-                        <p class="card-text display-6">{{ resumen.por_expirar }}</p>
+                <div class="col-md-3">
+                    <div class="card dashboard-card shadow-sm border border-2 border-secondary-subtle rounded-4 h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-2">
+                                <i class="bi bi-exclamation-triangle text-danger" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <h6 class="text-muted">Por expirar</h6>
+                            <div class="display-5 fw-bold text-danger">{{ resumen.por_expirar }}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="card text-bg-primary mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Aprobadas</h5>
-                        <p class="card-text display-6">{{ resumen.aprobadas }}</p>
+                <div class="col-md-3">
+                    <div class="card dashboard-card shadow-sm border border-2 border-secondary-subtle rounded-4 h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-2">
+                                <i class="bi bi-check-circle text-primary" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <h6 class="text-muted">Aprobadas</h6>
+                            <div class="display-5 fw-bold text-primary">{{ resumen.aprobadas }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tabla de gestión de incapacidades -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-table"></i> Gestión de incapacidades
+        <!-- Sistema de pestañas -->
+        <ul class="nav nav-tabs mb-4" id="adminTabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#incapacidades">
+                    <i class="bi bi-file-medical"></i> Gestión Incapacidades
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#juridico">
+                    <i class="bi bi-shield-exclamation"></i> Proceso Jurídico
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#reportes">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Reportes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#conciliacion">
+                    <i class="bi bi-cash-stack"></i> Conciliación
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#reciprocidad">
+                    <i class="bi bi-arrow-left-right"></i> Reciprocidad
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabsContent">
+            <!-- Pestaña Incapacidades -->
+            <div class="tab-pane fade show active" id="incapacidades">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-table"></i> Gestión de incapacidades</span>
+                        <div>
+                            <button class="btn btn-sm btn-light me-2" data-bs-toggle="modal" data-bs-target="#filtrosModal">
+                                <i class="bi bi-funnel"></i> Filtros
+                            </button>
+                            <button class="btn btn-sm btn-success">
+                                <i class="bi bi-plus-circle"></i> Nueva
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Colaborador</th>
+                                    <th>Tipo</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                    <th>Fecha inicio</th>
+                                    <th>Fecha fin</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for incapacidad in incapacidades %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ incapacidad.colaborador }}</td>
+                                    <td>
+                                        <span class="badge bg-info text-dark status-badge">
+                                            {{ incapacidad.tipo }}
+                                        </span>
+                                    </td>
+                                    <td>{{ incapacidad.motivo }}</td>
+                                    <td>
+                                        {% if incapacidad.estado == 'aprobada' %}
+                                            <span class="badge bg-success status-badge">Aprobada</span>
+                                        {% elif incapacidad.estado == 'rechazada' %}
+                                            <span class="badge bg-danger status-badge">Rechazada</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark status-badge">En revisión</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ incapacidad.fecha_inicio }}</td>
+                                    <td>{{ incapacidad.fecha_fin }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('ver_incapacidad', id=incapacidad.id) }}" class="btn btn-sm btn-info" title="Ver">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('editar_incapacidad', id=incapacidad.id) }}" class="btn btn-sm btn-warning" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            {% if incapacidad.estado == 'rechazada' %}
+                                                <a href="{{ url_for('gestionar_rechazo', id=incapacidad.id) }}" class="btn btn-sm btn-danger" title="Gestionar rechazo">
+                                                    <i class="bi bi-exclamation-octagon"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sección de transferibilidad -->
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <i class="bi bi-arrow-repeat"></i> Transferibilidad de Incapacidades
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5><i class="bi bi-arrow-right-circle"></i> Incapacidades transferibles</h5>
+                                <ul class="list-group">
+                                    {% for item in transferibles %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{ item.descripcion }}
+                                        <span class="badge bg-primary rounded-pill">{{ item.cantidad }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="bi bi-person-circle"></i> Casos por edad avanzada</h5>
+                                <ul class="list-group">
+                                    {% for item in casos_edad %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{ item.descripcion }}
+                                        <span class="badge bg-primary rounded-pill">{{ item.cantidad }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Colaborador</th>
-                            <th>Motivo</th>
-                            <th>Estado</th>
-                            <th>Fecha inicio</th>
-                            <th>Fecha fin</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for incapacidad in incapacidades %}
-                        <tr>
-                            <td>{{ loop.index }}</td>
-                            <td>{{ incapacidad.colaborador }}</td>
-                            <td>{{ incapacidad.motivo }}</td>
-                            <td>{{ incapacidad.estado }}</td>
-                            <td>{{ incapacidad.fecha_inicio }}</td>
-                            <td>{{ incapacidad.fecha_fin }}</td>
-                            <td>
-                                {% if incapacidad.estado == 'aprobada' or incapacidad.estado == 'rechazada' %}
-                                    <span class="badge bg-secondary">No editable</span>
-                                    {% if incapacidad.estado == 'rechazada' and incapacidad.comentario %}
-                                        <div class="small text-danger mt-1"><i class="bi bi-x-octagon"></i> {{ incapacidad.comentario }}</div>
-                                    {% endif %}
-                                {% else %}
-                                    <form method="post" action="{{ url_for('actualizar_estado_incapacidad', incapacidad_id=incapacidad.id) }}" class="d-inline">
-                                        <select name="nuevo_estado" class="form-select form-select-sm d-inline w-auto" onchange="mostrarComentario(this, 'comentario-{{ incapacidad.id }}')">
-                                            <option value="activa" {% if incapacidad.estado == 'activa' %}selected{% endif %}>Activa</option>
-                                            <option value="en_revision" {% if incapacidad.estado == 'en_revision' %}selected{% endif %}>En revisión</option>
-                                            <option value="por_expirar" {% if incapacidad.estado == 'por_expirar' %}selected{% endif %}>Por expirar</option>
-                                            <option value="aprobada" {% if incapacidad.estado == 'aprobada' %}selected{% endif %}>Aprobada</option>
-                                            <option value="rechazada" {% if incapacidad.estado == 'rechazada' %}selected{% endif %}>Rechazada</option>
-                                        </select>
-                                        <input type="text" name="comentario" id="comentario-{{ incapacidad.id }}" class="form-control form-control-sm mt-1" placeholder="Motivo del rechazo" style="display: {% if incapacidad.estado == 'rechazada' %}block{% else %}none{% endif %};" maxlength="255">
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary ms-1">Actualizar</button>
-                                    </form>
-                                    <script>
-                                    function mostrarComentario(select, inputId) {
-                                        var input = document.getElementById(inputId);
-                                        if (select.value === 'rechazada') {
-                                            input.style.display = 'block';
-                                            input.required = true;
-                                        } else {
-                                            input.style.display = 'none';
-                                            input.required = false;
-                                            input.value = '';
-                                        }
-                                    }
-                                    </script>
-                                {% endif %}
-                                {% if incapacidad.archivo_url %}
-                                    <a href="{{ incapacidad.archivo_url }}" target="_blank" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-eye"></i> Ver
-                                    </a>
-                                    <a href="{{ incapacidad.archivo_url }}" class="btn btn-sm btn-success" download>
-                                        <i class="bi bi-download"></i> Descargar
-                                    </a>
-                                {% else %}
-                                    <span class="text-muted">No adjunto</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+
+            <!-- Pestaña Jurídico -->
+            <div class="tab-pane fade" id="juridico">
+                <div class="card mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <i class="bi bi-shield-exclamation"></i> Gestión Jurídica
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <button class="btn btn-dark me-3" data-bs-toggle="modal" data-bs-target="#notificarJuridicoModal">
+                                <i class="bi bi-megaphone"></i> Notificar Proceso Jurídico
+                            </button>
+                            <button class="btn btn-outline-danger">
+                                <i class="bi bi-archive"></i> Archivos Jurídicos
+                            </button>
+                        </div>
+
+                        <h5 class="mb-3"><i class="bi bi-list-ul"></i> Casos activos</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Caso #</th>
+                                        <th>Colaborador</th>
+                                        <th>Tipo</th>
+                                        <th>Fecha inicio</th>
+                                        <th>Estatus</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for caso in casos_juridicos %}
+                                    <tr>
+                                        <td>J-{{ caso.id }}</td>
+                                        <td>{{ caso.colaborador }}</td>
+                                        <td>{{ caso.tipo }}</td>
+                                        <td>{{ caso.fecha_inicio }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ 'warning' if caso.estatus == 'en_proceso' else 'success' }} text-dark">
+                                                {{ caso.estatus }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-dark">
+                                                <i class="bi bi-file-earmark-text"></i> Detalles
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña Reportes -->
+            <div class="tab-pane fade" id="reportes">
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-file-earmark-bar-graph"></i> Reportes Mensuales
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-success bg-opacity-10 text-success">
+                                        Generar Reporte
+                                    </div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="mb-3">
+                                                <label class="form-label">Mes</label>
+                                                <select class="form-select">
+                                                    <option>Enero</option>
+                                                    <option>Febrero</option>
+                                                    <!-- Más meses -->
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Año</label>
+                                                <input type="number" class="form-control" value="2023">
+                                            </div>
+                                            <button type="submit" class="btn btn-success w-100">
+                                                <i class="bi bi-filetype-pdf"></i> Generar PDF
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-success bg-opacity-10 text-success">
+                                        Enviar a Contabilidad
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-muted">Reportes generados recientemente:</p>
+                                        <ul class="list-group">
+                                            {% for reporte in reportes_recientes %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                {{ reporte.nombre }}
+                                                <button class="btn btn-sm btn-outline-success">
+                                                    <i class="bi bi-send"></i> Enviar
+                                                </button>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña Conciliación -->
+            <div class="tab-pane fade" id="conciliacion">
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="bi bi-cash-stack"></i> Conciliación de Pagos
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5><i class="bi bi-check-circle"></i> Pagos conciliados</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Fecha</th>
+                                                <th>Monto</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pago in pagos_conciliados %}
+                                            <tr>
+                                                <td>{{ pago.id }}</td>
+                                                <td>{{ pago.fecha }}</td>
+                                                <td>${{ pago.monto }}</td>
+                                                <td><span class="badge bg-success">Conciliado</span></td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="bi bi-exclamation-triangle"></i> Pendientes por conciliar</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Fecha</th>
+                                                <th>Monto</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pago in pagos_pendientes %}
+                                            <tr>
+                                                <td>{{ pago.id }}</td>
+                                                <td>{{ pago.fecha }}</td>
+                                                <td>${{ pago.monto }}</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-warning">
+                                                        <i class="bi bi-check2"></i> Conciliar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña Reciprocidad -->
+            <div class="tab-pane fade" id="reciprocidad">
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <i class="bi bi-arrow-left-right"></i> Reciprocidad
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Gestión de derechos de acceso y acciones legales según normativa vigente.
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-info bg-opacity-10 text-info">
+                                        <i class="bi bi-envelope"></i> Solicitudes Pendientes
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group">
+                                            {% for solicitud in solicitudes_pendientes %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                {{ solicitud.tipo }} - {{ solicitud.solicitante }}
+                                                <button class="btn btn-sm btn-info">
+                                                    <i class="bi bi-reply"></i> Responder
+                                                </button>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-info bg-opacity-10 text-info">
+                                        <i class="bi bi-clock-history"></i> Histórico
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Fecha</th>
+                                                        <th>Solicitud</th>
+                                                        <th>Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for historico in historico_reciprocidad %}
+                                                    <tr>
+                                                        <td>{{ historico.fecha }}</td>
+                                                        <td>{{ historico.solicitud }}</td>
+                                                        <td>
+                                                            <span class="badge bg-{{ 'success' if historico.estado == 'completado' else 'secondary' }}">
+                                                                {{ historico.estado }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- Botón de reporte mensual -->
-        <div class="mb-4">
-            <a href="#" class="btn btn-outline-success">
-                <!-- Botón deshabilitado o sin acción -->
-                Reporte mensual
-            </a>
-        </div>
-
-        <!-- Aquí puedes agregar más módulos: conciliación de pagos, monitoreo, etc. -->
     </div>
+
+    <!-- Modal Filtros -->
+    <div class="modal fade" id="filtrosModal" tabindex="-1" aria-labelledby="filtrosModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filtrosModalLabel"><i class="bi bi-funnel"></i> Filtros de Incapacidades</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de incapacidad</label>
+                            <select class="form-select">
+                                <option>Todos</option>
+                                <option>Transferible</option>
+                                <option>Edad avanzada</option>
+                                <option>Común</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Estado</label>
+                            <select class="form-select">
+                                <option>Todos</option>
+                                <option>Aprobada</option>
+                                <option>Rechazada</option>
+                                <option>En revisión</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rango de fechas</label>
+                            <input type="text" class="form-control" placeholder="Seleccione rango">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Notificación Jurídica -->
+<div class="modal fade" id="notificarJuridicoModal" tabindex="-1" aria-labelledby="notificarJuridicoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" action="{{ url_for('notificar_juridico') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="notificarJuridicoModalLabel"><i class="bi bi-megaphone"></i> Notificar Proceso Jurídico</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">ID de Incapacidad</label>
+            <input type="number" class="form-control" name="incapacidad_id" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Comentario para jurídico</label>
+            <textarea class="form-control" name="comentario" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Notificar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+        <!-- Contenido similar al modal anterior pero para notificaciones jurídicas -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Activar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
 </body>
 </html>

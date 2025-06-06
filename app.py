@@ -32,10 +32,10 @@ def get_incapacidades(paciente_id):
 def get_db_connection():
     return mysql.connector.connect(
         host='localhost',
-        user='vitalis_user',
-        password='vitalis123',  # O tu contraseña si tienes
-        database='vitalis',
-        port=3306     # <--- Agrega esta línea
+        user='root',
+        password='',  # O tu contraseña si tienes
+        database='vitalis_db',
+        port=3307     # <--- Agrega esta línea
     )
 
 
@@ -283,6 +283,76 @@ def actualizar_estado_incapacidad(incapacidad_id):
     flash('Estado actualizado correctamente', 'success')
     return redirect(url_for('dashboard_admin'))
 
+@app.route('/ver_incapacidad/<int:id>')
+def ver_incapacidad(id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('''
+        SELECT i.*, p.nombre AS colaborador
+        FROM incapacidades i
+        LEFT JOIN pacientes p ON i.empleado_id = p.id
+        WHERE i.id = %s
+    ''', (id,))
+    incapacidad = cursor.fetchone()
+    conn.close()
+    return render_template('administradores/ver_incapacidad.html', incapacidad=incapacidad)
+
+@app.route('/editar_incapacidad/<int:id>', methods=['GET', 'POST'])
+def editar_incapacidad(id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    if request.method == 'POST':
+        motivo = request.form['motivo']
+        estado = request.form['estado']
+        comentario = request.form.get('comentario', '')
+        cursor.execute(
+            'UPDATE incapacidades SET motivo = %s, estado = %s, comentario = %s WHERE id = %s',
+            (motivo, estado, comentario, id)
+        )
+        conn.commit()
+        conn.close()
+        flash('Incapacidad actualizada correctamente', 'success')
+        return redirect(url_for('dashboard_admin'))
+    else:
+        cursor.execute('SELECT * FROM incapacidades WHERE id = %s', (id,))
+        incapacidad = cursor.fetchone()
+        conn.close()
+        return render_template('administradores/editar_incapacidad.html', incapacidad=incapacidad)
+@app.route('/gestionar_rechazo/<int:id>', methods=['GET', 'POST'])
+def gestionar_rechazo(id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    if request.method == 'POST':
+        comentario = request.form['comentario']
+        cursor.execute(
+            'UPDATE incapacidades SET estado = %s, comentario = %s WHERE id = %s',
+            ('rechazada', comentario, id)
+        )
+        conn.commit()
+        conn.close()
+        flash('Incapacidad rechazada correctamente', 'success')
+        return redirect(url_for('dashboard_admin'))
+    else:
+        cursor.execute('SELECT * FROM incapacidades WHERE id = %s', (id,))
+        incapacidad = cursor.fetchone()
+        conn.close()
+        return render_template('administradores/gestionar_rechazo.html', incapacidad=incapacidad)
+
+@app.route('/notificar_juridico', methods=['POST'])
+def notificar_juridico():
+    incapacidad_id = request.form.get('incapacidad_id')
+    comentario = request.form.get('comentario')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Ejemplo: Cambia el estado y guarda el comentario jurídico
+    cursor.execute(
+        "UPDATE incapacidades SET estado = %s, comentario = %s WHERE id = %s",
+        ('juridico', comentario, incapacidad_id)
+    )
+    conn.commit()
+    conn.close()
+    flash('Notificación jurídica enviada correctamente', 'success')
+    return redirect(url_for('dashboard_admin'))
 
 if __name__ == '__main__':
     app.run(debug=True)
