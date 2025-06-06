@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte Mensual</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h2 { color: #198754; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px;}
+        th, td { border: 1px solid #ccc; padding: 6px; }
+        th { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h2>Reporte Mensual - {{ mes }}/{{ anio }}</h2>
+    <h3>Incapacidades registradas</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Colaborador</th>
+                <th>Motivo</th>
+                <th>Estado</th>
+                <th>Fecha inicio</th>
+                <th>Fecha fin</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inc in incapacidades %}
+            <tr>
+                <td>{{ inc.id }}</td>
+                <td>{{ inc.colaborador }}</td>
+                <td>{{ inc.motivo }}</td>
+                <td>{{ inc.estado }}</td>
+                <td>{{ inc.fecha_inicio }}</td>
+                <td>{{ inc.fecha_fin }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3>Pagos conciliados</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID Pago</th>
+                <th>Colaborador</th>
+                <th>Motivo</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pago in pagos_conciliados %}
+            <tr>
+                <td>{{ pago.id }}</td>
+                <td>{{ pago.colaborador }}</td>
+                <td>{{ pago.motivo }}</td>
+                <td>${{ pago.monto }}</td>
+                <td>{{ pago.fecha }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

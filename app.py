@@ -6,6 +6,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_required  
 from werkzeug.utils import secure_filename
 import os
+from flask import render_template, request, make_response
+from weasyprint import HTML
+import datetime
 
 app = Flask(__name__)
 app.secret_key = 'clave_secreta_segura'
@@ -211,6 +214,7 @@ def dashboard_admin():
         return redirect(url_for('login_admin'))
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    # Incapacidades
     cursor.execute('''
         SELECT i.*, p.nombre AS colaborador
         FROM incapacidades i
@@ -218,51 +222,63 @@ def dashboard_admin():
         ORDER BY i.id DESC
     ''')
     incapacidades = cursor.fetchall()
-    # Calcular resumen
+    # Incapacidades para jurídico (por ejemplo, solo las aprobadas o en revisión)
+    cursor.execute("""
+        SELECT i.id, p.nombre AS colaborador, i.motivo
+        FROM incapacidades i
+        LEFT JOIN pacientes p ON i.empleado_id = p.id
+        WHERE i.estado IN ('aprobada', 'en_revision')
+        """)
+    incapacidades_para_juridico = cursor.fetchall()
+    # Resumen
     resumen = {
         'activas': sum(1 for i in incapacidades if i['estado'] == 'activa'),
         'en_revision': sum(1 for i in incapacidades if i['estado'] == 'en_revision'),
         'por_expirar': sum(1 for i in incapacidades if i['estado'] == 'por_expirar'),
         'aprobadas': sum(1 for i in incapacidades if i['estado'] == 'aprobada')
     }
+    # Pagos (si tienes tabla de pagos)
+    cursor.execute('''
+        SELECT p.*, i.estado AS estado_incapacidad
+        FROM pagos p
+        JOIN incapacidades i ON p.incapacidad_id = i.id
+        WHERE i.estado = 'aprobada'
+    ''')
+    pagos = cursor.fetchall()
+    pagos_conciliados = [p for p in pagos if p['estado_pago'] == 'conciliado']
+    pagos_pendientes = [p for p in pagos if p['estado_pago'] != 'conciliado']
+
+    # NUEVO: Incapacidades aprobadas para el select del modal de nuevo pago
+    cursor.execute("""
+        SELECT i.id, p.nombre AS colaborador, i.motivo
+        FROM incapacidades i
+        LEFT JOIN pacientes p ON i.empleado_id = p.id
+        WHERE i.estado = 'aprobada'
+    """)
+    incapacidades_aprobadas = cursor.fetchall()
+    
+    # Casos jurídicos activos
+    cursor.execute("""
+        SELECT i.id, p.nombre AS colaborador, i.motivo AS tipo, i.fecha_inicio, i.estado AS estatus
+        FROM incapacidades i
+        LEFT JOIN pacientes p ON i.empleado_id = p.id
+        WHERE i.estado = 'juridico'
+    """)
+    casos_juridicos = cursor.fetchall()
+
     conn.close()
-    return render_template('administradores/dashboard_admin.html', admin_nombre=admin_nombre, resumen=resumen, incapacidades=incapacidades)
-
-UPLOAD_FOLDER = os.path.join('static', 'uploads')
-ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/subir_incapacidad', methods=['GET', 'POST'])
-def subir_incapacidad():
-    paciente_id = session.get('usuario_id')
-    if not paciente_id:
-        return redirect(url_for('login_pacientes'))
-    if request.method == 'POST':
-        archivo = request.files.get('archivo')
-        fecha_inicio = request.form.get('fecha_inicio')
-        fecha_fin = request.form.get('fecha_fin')
-        motivo = request.form.get('motivo')
-        if archivo and allowed_file(archivo.filename) and fecha_inicio and fecha_fin and motivo:
-            filename = secure_filename(archivo.filename)
-            save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            archivo.save(save_path)
-            archivo_url = f'/static/uploads/{filename}'
-            # Guardar en la base de datos con fechas y motivo
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute('INSERT INTO incapacidades (empleado_id, archivo_url, estado, fecha_inicio, fecha_fin, motivo) VALUES (%s, %s, %s, %s, %s, %s)',
-                           (paciente_id, archivo_url, 'activa', fecha_inicio, fecha_fin, motivo))
-            conn.commit()
-            conn.close()
-            flash('Archivo subido exitosamente', 'success')
-            return redirect(url_for('dashboard_paciente'))
-        else:
-            flash('Archivo o datos faltantes/incorrectos', 'danger')
-    return render_template('pacientes/subir_incapacidad.html')
-
+    return render_template(
+    'administradores/dashboard_admin.html',
+    admin_nombre=admin_nombre,
+    resumen=resumen,
+    incapacidades=incapacidades,
+    pagos_conciliados=pagos_conciliados,
+    pagos_pendientes=pagos_pendientes,
+    incapacidades_aprobadas=incapacidades_aprobadas,
+    incapacidades_para_juridico=incapacidades_para_juridico,
+    casos_juridicos=casos_juridicos  # <-- AGREGA ESTA LÍNEA
+)
+    
 @app.route('/actualizar_estado_incapacidad/<int:incapacidad_id>', methods=['POST'])
 def actualizar_estado_incapacidad(incapacidad_id):
     if 'admin_id' not in session:
@@ -353,6 +369,104 @@ def notificar_juridico():
     conn.close()
     flash('Notificación jurídica enviada correctamente', 'success')
     return redirect(url_for('dashboard_admin'))
+
+@app.route('/conciliar_pago/<int:pago_id>', methods=['POST'])
+def conciliar_pago(pago_id):
+    if 'admin_id' not in session:
+        return redirect(url_for('login_admin'))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE pagos SET estado_pago = 'conciliado' WHERE id = %s", (pago_id,))
+    conn.commit()
+    conn.close()
+    flash('Pago conciliado correctamente', 'success')
+    return redirect(url_for('dashboard_admin'))
+@app.route('/nuevo_pago', methods=['POST'])
+def nuevo_pago():
+    if 'admin_id' not in session:
+        return redirect(url_for('login_admin'))
+    incapacidad_id = request.form['incapacidad_id']
+    fecha = request.form['fecha']
+    monto = request.form['monto']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO pagos (incapacidad_id, fecha, monto, estado_pago) VALUES (%s, %s, %s, %s)",
+        (incapacidad_id, fecha, monto, 'pendiente')
+    )
+    conn.commit()
+    conn.close()
+    flash('Pago registrado correctamente', 'success')
+    return redirect(url_for('dashboard_admin'))
+
+@app.route('/reporte_mensual', methods=['POST'])
+def reporte_mensual():
+    mes = int(request.form['mes'])
+    anio = int(request.form['anio'])
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    # Ejemplo: incapacidades aprobadas en ese mes
+    cursor.execute("""
+        SELECT i.*, p.nombre AS colaborador
+        FROM incapacidades i
+        LEFT JOIN pacientes p ON i.empleado_id = p.id
+        WHERE MONTH(i.fecha_inicio) = %s AND YEAR(i.fecha_inicio) = %s
+    """, (mes, anio))
+    incapacidades = cursor.fetchall()
+
+    # Ejemplo: pagos conciliados en ese mes
+    cursor.execute("""
+        SELECT p.*, i.id AS incapacidad_id, i.motivo, pa.nombre AS colaborador
+        FROM pagos p
+        JOIN incapacidades i ON p.incapacidad_id = i.id
+        LEFT JOIN pacientes pa ON i.empleado_id = pa.id
+        WHERE MONTH(p.fecha) = %s AND YEAR(p.fecha) = %s AND p.estado_pago = 'conciliado'
+    """, (mes, anio))
+    pagos_conciliados = cursor.fetchall()
+
+    conn.close()
+
+    # Renderiza un HTML para el PDF
+    rendered = render_template(
+        'administradores/reporte_mensual_pdf.html',
+        mes=mes,
+        anio=anio,
+        incapacidades=incapacidades,
+        pagos_conciliados=pagos_conciliados
+    )
+    pdf = HTML(string=rendered).write_pdf()
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'inline; filename=reporte_{anio}_{mes}.pdf'
+    return response
+@app.route('/subir_incapacidad', methods=['POST'])
+def subir_incapacidad():
+    paciente_id = session.get('usuario_id')
+    if not paciente_id:
+        return redirect(url_for('login_pacientes'))
+    # Aquí deberías procesar el archivo y los datos del formulario
+    # Por ejemplo:
+    motivo = request.form.get('motivo')
+    fecha_inicio = request.form.get('fecha_inicio')
+    fecha_fin = request.form.get('fecha_fin')
+    archivo = request.files.get('archivo')
+    filename = None
+    if archivo:
+        filename = secure_filename(archivo.filename)
+        archivo.save(os.path.join('uploads', filename))  # Asegúrate de tener la carpeta 'uploads'
+    # Guarda la incapacidad en la base de datos
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        'INSERT INTO incapacidades (empleado_id, motivo, fecha_inicio, fecha_fin, archivo, estado) VALUES (%s, %s, %s, %s, %s, %s)',
+        (paciente_id, motivo, fecha_inicio, fecha_fin, filename, 'en_revision')
+    )
+    conn.commit()
+    conn.close()
+    flash('Incapacidad enviada correctamente', 'success')
+    return redirect(url_for('dashboard_paciente'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -111,11 +111,6 @@
                     <i class="bi bi-cash-stack"></i> Conciliación
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#reciprocidad">
-                    <i class="bi bi-arrow-left-right"></i> Reciprocidad
-                </a>
-            </li>
         </ul>
 
         <div class="tab-content" id="adminTabsContent">
@@ -159,14 +154,20 @@
                                     </td>
                                     <td>{{ incapacidad.motivo }}</td>
                                     <td>
-                                        {% if incapacidad.estado == 'aprobada' %}
-                                            <span class="badge bg-success status-badge">Aprobada</span>
-                                        {% elif incapacidad.estado == 'rechazada' %}
-                                            <span class="badge bg-danger status-badge">Rechazada</span>
-                                        {% else %}
-                                            <span class="badge bg-warning text-dark status-badge">En revisión</span>
-                                        {% endif %}
-                                    </td>
+    {% if incapacidad.estado == 'aprobada' %}
+        <span class="badge bg-success status-badge">Aprobada</span>
+    {% elif incapacidad.estado == 'rechazada' %}
+        <span class="badge bg-danger status-badge">Rechazada</span>
+    {% elif incapacidad.estado == 'activa' %}
+        <span class="badge bg-primary status-badge">Activa</span>
+    {% elif incapacidad.estado == 'por_expirar' %}
+        <span class="badge bg-danger status-badge">Por expirar</span>
+    {% elif incapacidad.estado == 'juridico' %}
+        <span class="badge bg-dark status-badge">Jurídico</span>
+    {% else %}
+        <span class="badge bg-warning text-dark status-badge">{{ incapacidad.estado|capitalize }}</span>
+    {% endif %}
+</td>
                                     <td>{{ incapacidad.fecha_inicio }}</td>
                                     <td>{{ incapacidad.fecha_fin }}</td>
                                     <td>
@@ -294,23 +295,33 @@
                                         Generar Reporte
                                     </div>
                                     <div class="card-body">
-                                        <form>
-                                            <div class="mb-3">
-                                                <label class="form-label">Mes</label>
-                                                <select class="form-select">
-                                                    <option>Enero</option>
-                                                    <option>Febrero</option>
-                                                    <!-- Más meses -->
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Año</label>
-                                                <input type="number" class="form-control" value="2023">
-                                            </div>
-                                            <button type="submit" class="btn btn-success w-100">
-                                                <i class="bi bi-filetype-pdf"></i> Generar PDF
-                                            </button>
-                                        </form>
+                                        <form method="post" action="{{ url_for('reporte_mensual') }}" target="_blank">
+    <div class="mb-3">
+        <label class="form-label">Mes</label>
+        <select class="form-select" name="mes" required>
+            <option value="">Seleccione un mes</option>
+            <option value="1">Enero</option>
+            <option value="2">Febrero</option>
+            <option value="3">Marzo</option>
+            <option value="4">Abril</option>
+            <option value="5">Mayo</option>
+            <option value="6">Junio</option>
+            <option value="7">Julio</option>
+            <option value="8">Agosto</option>
+            <option value="9">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Año</label>
+        <input type="number" class="form-control" name="anio" value="2025" required>
+    </div>
+    <button type="submit" class="btn btn-success w-100">
+        <i class="bi bi-filetype-pdf"></i> Generar PDF
+    </button>
+</form>
                                     </div>
                                 </div>
                             </div>
@@ -339,143 +350,79 @@
                 </div>
             </div>
 
+            
             <!-- Pestaña Conciliación -->
-            <div class="tab-pane fade" id="conciliacion">
-                <div class="card mb-4">
-                    <div class="card-header bg-warning text-dark">
-                        <i class="bi bi-cash-stack"></i> Conciliación de Pagos
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h5><i class="bi bi-check-circle"></i> Pagos conciliados</h5>
-                                <div class="table-responsive">
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Fecha</th>
-                                                <th>Monto</th>
-                                                <th>Estado</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for pago in pagos_conciliados %}
-                                            <tr>
-                                                <td>{{ pago.id }}</td>
-                                                <td>{{ pago.fecha }}</td>
-                                                <td>${{ pago.monto }}</td>
-                                                <td><span class="badge bg-success">Conciliado</span></td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h5><i class="bi bi-exclamation-triangle"></i> Pendientes por conciliar</h5>
-                                <div class="table-responsive">
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Fecha</th>
-                                                <th>Monto</th>
-                                                <th>Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for pago in pagos_pendientes %}
-                                            <tr>
-                                                <td>{{ pago.id }}</td>
-                                                <td>{{ pago.fecha }}</td>
-                                                <td>${{ pago.monto }}</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-warning">
-                                                        <i class="bi bi-check2"></i> Conciliar
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+<div class="tab-pane fade" id="conciliacion">
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#nuevoPagoModal">
+        <i class="bi bi-plus-circle"></i> Nuevo Pago
+    </button>
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <i class="bi bi-cash-stack"></i> Conciliación de Pagos
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-check-circle"></i> Pagos conciliados</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pago in pagos_conciliados %}
+                                <tr>
+                                    <td>{{ pago.id }}</td>
+                                    <td>{{ pago.fecha }}</td>
+                                    <td>${{ pago.monto }}</td>
+                                    <td><span class="badge bg-success">Conciliado</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </div>
-
-            <!-- Pestaña Reciprocidad -->
-            <div class="tab-pane fade" id="reciprocidad">
-                <div class="card mb-4">
-                    <div class="card-header bg-info text-white">
-                        <i class="bi bi-arrow-left-right"></i> Reciprocidad
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle"></i> Gestión de derechos de acceso y acciones legales según normativa vigente.
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card mb-3">
-                                    <div class="card-header bg-info bg-opacity-10 text-info">
-                                        <i class="bi bi-envelope"></i> Solicitudes Pendientes
-                                    </div>
-                                    <div class="card-body">
-                                        <ul class="list-group">
-                                            {% for solicitud in solicitudes_pendientes %}
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                {{ solicitud.tipo }} - {{ solicitud.solicitante }}
-                                                <button class="btn btn-sm btn-info">
-                                                    <i class="bi bi-reply"></i> Responder
-                                                </button>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header bg-info bg-opacity-10 text-info">
-                                        <i class="bi bi-clock-history"></i> Histórico
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Fecha</th>
-                                                        <th>Solicitud</th>
-                                                        <th>Estado</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for historico in historico_reciprocidad %}
-                                                    <tr>
-                                                        <td>{{ historico.fecha }}</td>
-                                                        <td>{{ historico.solicitud }}</td>
-                                                        <td>
-                                                            <span class="badge bg-{{ 'success' if historico.estado == 'completado' else 'secondary' }}">
-                                                                {{ historico.estado }}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-md-6">
+                    <h5><i class="bi bi-exclamation-triangle"></i> Pendientes por conciliar</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pago in pagos_pendientes %}
+                                <tr>
+                                    <td>{{ pago.id }}</td>
+                                    <td>{{ pago.fecha }}</td>
+                                    <td>${{ pago.monto }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('conciliar_pago', pago_id=pago.id) }}" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-check2"></i> Conciliar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
     <!-- Modal Filtros -->
     <div class="modal fade" id="filtrosModal" tabindex="-1" aria-labelledby="filtrosModalLabel" aria-hidden="true">
@@ -530,9 +477,16 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">ID de Incapacidad</label>
-            <input type="number" class="form-control" name="incapacidad_id" required>
-          </div>
+    <label class="form-label">Incapacidad</label>
+    <select class="form-select" name="incapacidad_id" required>
+        <option value="">Seleccione una incapacidad</option>
+        {% for inc in incapacidades_para_juridico %}
+        <option value="{{ inc.id }}">
+            #{{ inc.id }} - {{ inc.colaborador }} ({{ inc.motivo }})
+        </option>
+        {% endfor %}
+    </select>
+</div>
           <div class="mb-3">
             <label class="form-label">Comentario para jurídico</label>
             <textarea class="form-control" name="comentario" required></textarea>
@@ -557,5 +511,43 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         });
     </script>
+    <!-- Modal Nuevo Pago -->
+<div class="modal fade" id="nuevoPagoModal" tabindex="-1" aria-labelledby="nuevoPagoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" action="{{ url_for('nuevo_pago') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="nuevoPagoModalLabel"><i class="bi bi-plus-circle"></i> Registrar Nuevo Pago</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Incapacidad aprobada</label>
+            <select class="form-select" name="incapacidad_id" required>
+                <option value="">Seleccione una incapacidad</option>
+                {% for inc in incapacidades_aprobadas %}
+                <option value="{{ inc.id }}">
+                    #{{ inc.id }} - {{ inc.colaborador }} ({{ inc.motivo }})
+                </option>
+                {% endfor %}
+        </select>
+</div>
+          <div class="mb-3">
+            <label class="form-label">Fecha</label>
+            <input type="date" class="form-control" name="fecha" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Monto</label>
+            <input type="number" step="0.01" class="form-control" name="monto" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Registrar Pago</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 </html>
